@@ -16,6 +16,14 @@
 **Purpose**: [What belongs here]  
 **Example**: [Brief example]
 
+## Spec と影響範囲の対応
+
+| spec        | 範囲                 |
+| ----------- | -------------------- |
+| [spec-name] | [directories owned]  |
+
+[Rules for keeping spec boundaries from overlapping, and what must be settled on main before branching]
+
 ## Naming Conventions
 
 - **Files**: [Pattern, e.g., PascalCase, kebab-case]

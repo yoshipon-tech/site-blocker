@@ -14,5 +14,9 @@
 
 [What makes this product unique or valuable]
 
+## Roadmap Direction
+
+[Current phase scope and what is deferred to later phases]
+
 ---
 _Focus on patterns and purpose, not exhaustive feature lists_

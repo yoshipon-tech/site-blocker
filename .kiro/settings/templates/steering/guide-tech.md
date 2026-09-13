@@ -4,6 +4,8 @@
 
 [High-level system design approach]
 
+[If the system has multiple deployable parts, describe each part's responsibility and the contract (interface) between them]
+
 ## Core Technologies
 
 - **Language**: [e.g., TypeScript, Python]
@@ -24,6 +26,9 @@
 
 ### Testing
 [e.g., Jest, coverage requirements]
+
+### Security
+[e.g., treat untrusted input as text, never inject as HTML]
 
 ## Development Environment
 
