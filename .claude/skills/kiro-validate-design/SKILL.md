@@ -29,7 +29,7 @@ Otherwise, load all necessary context:
 - Read `.kiro/specs/{feature}/spec.json` for language and metadata
 - Read `.kiro/specs/{feature}/requirements.md` for requirements
 - Read `.kiro/specs/{feature}/design.md` for design document
-- Core steering context: `product.md`, `tech.md`, `structure.md`
+- Core steering context: `guide-product.md`, `guide-tech.md`, `guide-structure.md`
 - Additional steering files only when directly relevant to architecture boundaries, integrations, runtime prerequisites, domain rules, security/performance constraints, or team conventions that affect implementation readiness
 - Relevant local agent skills or playbooks only when they clearly match the feature's host environment or use case and provide review-relevant context
 
