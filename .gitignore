@@ -1,0 +1,19 @@
+node_modules/
+.pnpm-store/
+
+# WXT
+.output/
+.wxt/
+stats.html
+web-ext.config.ts
+
+# build
+dist/
+
+# env
+.env
+.env.*
+
+# OS / editor
+.DS_Store
+*.log
