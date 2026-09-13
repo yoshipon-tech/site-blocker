@@ -25,7 +25,7 @@ If steering/spec context is already available from conversation, skip redundant 
 Otherwise, load all necessary context:
 - `.kiro/specs/{feature}/spec.json`, `requirements.md`, `design.md`
 - `.kiro/specs/{feature}/tasks.md` (if exists, for merge mode)
-- Core steering context: `product.md`, `tech.md`, `structure.md`
+- Core steering context: `guide-product.md`, `guide-tech.md`, `guide-structure.md`
 - Additional steering files only when directly relevant to requirements coverage, design boundaries, runtime prerequisites, or team conventions that affect task executability
 
 - Determine execution mode:

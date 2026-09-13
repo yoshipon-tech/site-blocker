@@ -62,7 +62,7 @@ Web: location.hash を読んで表示
 | ------------------ | ------------------------------------------ | ---------------------------------------------------------------------- |
 | ブロック方法       | `declarativeNetRequest` の dynamic ルール   | ページの読み込み前に止まる。実行時にルールを書き換えられる             |
 | 拡張のビルド       | [WXT](https://wxt.dev/)（Manifest V3）      | `entrypoints/` の構成から manifest を生成でき、手で書く設定が少ない     |
-| ブロック画面       | 静的HTML                                    | 元URLの表示だけならクライアントで完結する                              |
+| ブロック画面       | Vite + React                                | ビルド結果は静的ファイルなので GitHub Pages にそのまま置ける           |
 | ホスティング       | GitHub Pages                                | 画面の変更をデプロイだけで反映でき、拡張の更新やストア審査を待たなくてよい |
 | リポジトリ         | pnpm workspace のモノレポ                   | 拡張とブロック画面を1つのリポジトリで管理する                          |
 
@@ -75,7 +75,7 @@ site-blocker/
 ├── package.json
 └── apps/
     ├── extension/          WXT（Manifest V3）
-    └── web/                静的HTML
+    └── web/                Vite + React
 ```
 
 ## ロードマップ
@@ -95,7 +95,7 @@ site-blocker/
 
 ## 開発の進め方
 
-[cc-sdd](https://github.com/gotalab/cc-sdd)（v3.0.2）を使った仕様駆動開発で進めます。
+[cc-sdd](https://github.com/gotalab/cc-sdd)（v3.0.2）を使った仕様駆動開発で進めます。詳しい手順は [docs/guide-cc-sdd.md](docs/guide-cc-sdd.md) を参照してください。
 
 ```
 /kiro-steering            プロジェクト全体の前提を .kiro/steering/ に書く
@@ -136,9 +136,11 @@ cd ../site-blocker-wt/redirect-rules && pnpm install
 | カスタムドメインを使うか。リダイレクト先URLは配布した拡張に埋め込まれるため、後から変えると古い拡張が壊れる | ストア公開の前                 |
 | ストア公開に必要なもの（プライバシーポリシー、掲載情報）と、ブロックリスト編集UI                        | ストア公開の段階の spec        |
 | 一時解除などで Web から拡張を操作する場合の `externally_connectable` とメッセージの形                    | 該当機能の spec の前に steering へ追加 |
+| テストフレームワーク                                                                                   | `monorepo-setup` の design     |
+| lint / format / 型チェックの共通設定と一括実行（命名規則・パスエイリアスを含む）                        | 別の spec                      |
+| プルリクや push で自動チェックする CI                                                                  | 別の spec                      |
 
 ## 必要環境
 
-- Node.js 22 以上
-- pnpm
+- [mise](https://mise.jdx.dev/)（`mise install` で `mise.toml` に固定した Node.js 26 系と pnpm が入る）
 - Chrome

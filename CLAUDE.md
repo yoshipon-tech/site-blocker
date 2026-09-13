@@ -57,5 +57,10 @@ Skills are located in `.claude/skills/kiro-*/SKILL.md`
 
 ## Steering Configuration
 - Load entire `.kiro/steering/` as project memory
-- Default files: `product.md`, `tech.md`, `structure.md`
+- Default files: `guide-product.md`, `guide-tech.md`, `guide-structure.md`
 - Custom files are supported (managed via `/kiro-steering-custom`)
+
+## File Naming Prefixes
+- `guide-*.md`: 判断の前提になる知識・背景（`.kiro/steering/` の steering はすべてこれ）
+- `rule-*.md`: 必ず守る作業ルール（`.claude/rules/` に置き、Claude Code が毎回読み込む）
+- kiro スキル内の steering ファイル名は `guide-` 付きに書き換えてある。cc-sdd を更新・再インストールすると元の名前に戻るので、その際は置換し直す

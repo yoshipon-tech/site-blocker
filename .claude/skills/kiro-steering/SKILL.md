@@ -38,7 +38,7 @@ If steering context is already available from conversation, skip redundant file 
 
 Check `.kiro/steering/` status:
 
-**Bootstrap Mode**: Empty OR missing core files (product.md, tech.md, structure.md)
+**Bootstrap Mode**: Empty OR missing core files (guide-product.md, guide-tech.md, guide-structure.md)
 **Sync Mode**: All core files exist
 
 ---
@@ -113,9 +113,9 @@ Chat summary only (files updated directly).
 Steering Created
 
 ## Generated:
-- product.md: [Brief description]
-- tech.md: [Key stack]
-- structure.md: [Organization]
+- guide-product.md: [Brief description]
+- guide-tech.md: [Key stack]
+- guide-structure.md: [Organization]
 
 Review and approve as Source of Truth.
 ```
@@ -125,14 +125,14 @@ Review and approve as Source of Truth.
 Steering Updated
 
 ## Changes:
-- tech.md: React 18 → 19
-- structure.md: Added API pattern
+- guide-tech.md: React 18 → 19
+- guide-structure.md: Added API pattern
 
 ## Code Drift:
 - Components not following import conventions
 
 ## Recommendations:
-- Consider api-standards.md
+- Consider guide-api-standards.md
 ```
 
 ## Examples
@@ -143,7 +143,7 @@ Steering Updated
 
 ### Sync
 **Input**: Existing steering, new `/api` directory
-**Output**: Updated structure.md, flagged non-compliant files, suggested api-standards.md
+**Output**: Updated guide-structure.md, flagged non-compliant files, suggested guide-api-standards.md
 
 ## Safety & Fallback
 

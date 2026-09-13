@@ -21,7 +21,7 @@ argument-hint: <idea-or-request>
 Gather **only metadata** to determine the action path. Do NOT read full file contents yet.
 
 - **Specs inventory**: Glob `.kiro/specs/*/spec.json`, read each spec.json for `name`, `phase` fields and `approvals` status. Note feature names and their current status.
-- **Steering existence**: Check which files exist in `.kiro/steering/` (product.md, tech.md, structure.md, roadmap.md). Do NOT read their contents yet.
+- **Steering existence**: Check which files exist in `.kiro/steering/` (guide-product.md, guide-tech.md, guide-structure.md, roadmap.md). Do NOT read their contents yet.
 - **Roadmap check**: If `.kiro/steering/roadmap.md` exists, read it. This contains project-level context (approach, scope, constraints, spec list) from a previous discovery session. Use it to restore project context.
 - **Top-level structure**: List the project root directory to note key directories and files. Do NOT recurse into subdirectories.
 
@@ -61,7 +61,7 @@ For Path A/B, recommend the next action and stop.
 **Only for Path C, D, and E.** Now load the context needed for discovery.
 
 **In main context** (essential for dialogue with user):
-- **Steering documents**: Read product.md and tech.md (if they exist) for project goals, constraints, and tech stack
+- **Steering documents**: Read guide-product.md and guide-tech.md (if they exist) for project goals, constraints, and tech stack
 - **Relevant specs**: If the request is adjacent to an existing spec, read that spec's requirements.md to understand boundaries and avoid overlap
 
 **Delegate to subagent via Agent tool** (keeps exploration out of main context):
