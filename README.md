@@ -81,18 +81,10 @@ site-blocker/
 
 ## ロードマップ
 
-### 第一段階
+- **第一段階**: コードに書いたブロックリストで止め、GitHub Pages のブロック画面に元URLを表示する
+- **次段階以降**: ブロックリスト編集UI、時間帯・曜日によるブロック、一時解除（「5分だけ開く」）、Chrome ウェブストアでの公開
 
-- `apps/extension`: コードに書いたブロックリストを、インストール時に dynamic ルールとして登録する
-- `apps/web`: `/blocked` で元URLを表示し、GitHub Pages に公開する
-- 拡張は開発者モードで読み込む
-
-### 次段階以降
-
-- ポップアップかオプションページからブロックリストを編集する
-- 時間帯・曜日によるブロック
-- 一時解除（「5分だけ開く」）
-- Chrome ウェブストアでの公開
+spec の単位・順序・前提条件と、未解決の課題は [docs/guide-roadmap.md](docs/guide-roadmap.md) にまとめています。拡張を Chrome で確認する手順も同じ文書にあります。
 
 ## 開発の進め方
 
@@ -106,12 +98,7 @@ Claude Code で進めます。詳しい手順は [docs/guide-workflow.md](docs/g
 
 - 各段は人が確認してから次に進みます
 - 実装はタスクごとに実際に検証します（コマンド / Playwright / ブラウザ）
-- 機能は触るディレクトリ（影響範囲）で分けます
-
-  | 機能             | 範囲                              |
-  | ---------------- | --------------------------------- |
-  | `redirect-rules` | `apps/extension`                  |
-  | `blocked-page`   | `apps/web`, `.github/workflows`   |
+- 機能は触るディレクトリ（影響範囲）で分けます。確定した割り当ては [.claude/rules/guide-structure.md](.claude/rules/guide-structure.md)、これからの計画は [docs/guide-roadmap.md](docs/guide-roadmap.md) にあります
 
 ### git worktree による並行開発
 
@@ -126,20 +113,7 @@ cd ../site-blocker-wt/redirect-rules && pnpm install
 - 実装中に方針を変えたくなったら main で直してから各ブランチに取り込む
 - `pnpm-lock.yaml` が衝突したら手で直さず、マージ後に `pnpm install` で作り直す
 
-## 未解決の課題
-
-| 課題                                                                                                   | 解くタイミング                 |
-| ------------------------------------------------------------------------------------------------------ | ------------------------------ |
-| `redirect` ルールに `host_permissions` が要るか。`declarativeNetRequest` と `declarativeNetRequestWithHostAccess` のどちらにするか | `redirect-rules` の方針決め    |
-| 元URLにすでに `#` が含まれる場合も、フラグメント渡しが意図どおり動くか                                  | `redirect-rules` の実装時に手動確認 |
-| カスタムドメインを使うか。リダイレクト先URLは配布した拡張に埋め込まれるため、後から変えると古い拡張が壊れる | ストア公開の前                 |
-| ストア公開に必要なもの（プライバシーポリシー、掲載情報）と、ブロックリスト編集UI                        | ストア公開の段階の spec        |
-| 一時解除などで Web から拡張を操作する場合の `externally_connectable` とメッセージの形                    | 該当機能の spec の前に `.claude/rules/` へ追加 |
-| テストフレームワーク                                                                                   | `monorepo-setup` の design     |
-| lint / format / 型チェックの共通設定と一括実行（命名規則・パスエイリアスを含む）                        | 別の spec                      |
-| プルリクや push で自動チェックする CI                                                                  | 別の spec                      |
-
 ## 必要環境
 
 - [mise](https://mise.jdx.dev/)（`mise install` で `mise.toml` に固定した Node.js 26 系と pnpm が入る）
-- Chrome
+- Chrome（拡張の確認手順は [docs/guide-roadmap.md](docs/guide-roadmap.md)）
