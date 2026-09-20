@@ -68,8 +68,9 @@ Web: location.hash を読んで表示
 
 ```
 site-blocker/
-├── .kiro/                  cc-sdd の steering / specs
-├── .claude/skills/         cc-sdd のスキル
+├── .claude/rules/          前提（guide-*）と作業ルール（rule-*）
+├── .claude/skills/         review / debug / verify-completion
+├── docs/specs/             機能ごとの spec
 ├── .github/workflows/      apps/web を GitHub Pages へ公開
 ├── pnpm-workspace.yaml
 ├── package.json
@@ -95,47 +96,45 @@ site-blocker/
 
 ## 開発の進め方
 
-[cc-sdd](https://github.com/gotalab/cc-sdd)（v3.0.2）を使った仕様駆動開発で進めます。詳しい手順は [docs/guide-cc-sdd.md](docs/guide-cc-sdd.md) を参照してください。
+Claude Code で進めます。詳しい手順は [docs/guide-workflow.md](docs/guide-workflow.md) を参照してください。
 
 ```
-/kiro-steering            プロジェクト全体の前提を .kiro/steering/ に書く
-/kiro-spec-init           spec を作る
-/kiro-spec-requirements   要件      ← 承認
-/kiro-spec-design         設計      ← 承認
-/kiro-spec-tasks          タスク    ← 承認
-/kiro-impl                実装
+/spec <機能名>   requirements → design → tasks   各段で停止・確認
+/impl <機能名>   タスクを実装し、都度検証        コミットはしない
+人がレビュー     通しで差分を読んでコミット
 ```
 
-- 各フェーズは人が確認してから次に進みます（自動承認は使いません）
-- spec は触るディレクトリ（影響範囲）で分けます
+- 各段は人が確認してから次に進みます
+- 実装はタスクごとに実際に検証します（コマンド / Playwright / ブラウザ）
+- 機能は触るディレクトリ（影響範囲）で分けます
 
-  | spec             | 範囲                              |
+  | 機能             | 範囲                              |
   | ---------------- | --------------------------------- |
   | `redirect-rules` | `apps/extension`                  |
   | `blocked-page`   | `apps/web`, `.github/workflows`   |
 
 ### git worktree による並行開発
 
-spec を main で承認したあと、spec ごとにブランチと worktree を作って並行で実装します。
+方針を main で承認したあと、機能ごとにブランチと worktree を作って並行で実装します。
 
 ```bash
 git worktree add ../site-blocker-wt/redirect-rules -b feat/redirect-rules
 cd ../site-blocker-wt/redirect-rules && pnpm install
 ```
 
-- steering・spec・URL の契約は分岐前に main で確定させる
-- 実装中に spec を変えたくなったら main で直してから各ブランチに取り込む
+- `.claude/rules/`・spec・URL の契約は分岐前に main で確定させる
+- 実装中に方針を変えたくなったら main で直してから各ブランチに取り込む
 - `pnpm-lock.yaml` が衝突したら手で直さず、マージ後に `pnpm install` で作り直す
 
 ## 未解決の課題
 
 | 課題                                                                                                   | 解くタイミング                 |
 | ------------------------------------------------------------------------------------------------------ | ------------------------------ |
-| `redirect` ルールに `host_permissions` が要るか。`declarativeNetRequest` と `declarativeNetRequestWithHostAccess` のどちらにするか | `redirect-rules` の design     |
+| `redirect` ルールに `host_permissions` が要るか。`declarativeNetRequest` と `declarativeNetRequestWithHostAccess` のどちらにするか | `redirect-rules` の方針決め    |
 | 元URLにすでに `#` が含まれる場合も、フラグメント渡しが意図どおり動くか                                  | `redirect-rules` の実装時に手動確認 |
 | カスタムドメインを使うか。リダイレクト先URLは配布した拡張に埋め込まれるため、後から変えると古い拡張が壊れる | ストア公開の前                 |
 | ストア公開に必要なもの（プライバシーポリシー、掲載情報）と、ブロックリスト編集UI                        | ストア公開の段階の spec        |
-| 一時解除などで Web から拡張を操作する場合の `externally_connectable` とメッセージの形                    | 該当機能の spec の前に steering へ追加 |
+| 一時解除などで Web から拡張を操作する場合の `externally_connectable` とメッセージの形                    | 該当機能の spec の前に `.claude/rules/` へ追加 |
 | テストフレームワーク                                                                                   | `monorepo-setup` の design     |
 | lint / format / 型チェックの共通設定と一括実行（命名規則・パスエイリアスを含む）                        | 別の spec                      |
 | プルリクや push で自動チェックする CI                                                                  | 別の spec                      |

@@ -1,66 +1,90 @@
-# Agentic SDLC and Spec-Driven Development
+# site-blocker
 
-Kiro-style Spec-Driven Development on an agentic SDLC
+requirements → design → tasks → 実装 の仕様駆動で進める。3段の文書は作るが、承認ステートマシンや多段の自動化は持たない。
 
-## Project Context
+## 前提の置き場所
 
-### Paths
-- Steering: `.kiro/steering/`
-- Specs: `.kiro/specs/`
+Claude Code が起動時に自動で読み込む。
 
-### Steering vs Specification
+| 場所                       | 中身                                             |
+| -------------------------- | ------------------------------------------------ |
+| `CLAUDE.md`                | このファイル。進め方のルール                     |
+| `.claude/rules/guide-*.md` | 判断の前提になる知識・背景（製品・技術・構成）   |
+| `.claude/rules/rule-*.md`  | 必ず守る作業ルール（コミット形式など）           |
 
-**Steering** (`.kiro/steering/`) - Guide AI with project-wide rules and context
-**Specs** (`.kiro/specs/`) - Formalize development process for individual features
+自動では読み込まない。必要なときに読む。
 
-### Active Specifications
-- Check `.kiro/specs/` for active specifications
-- Use `/kiro-spec-status [feature-name]` to check progress
+| 場所                          | 中身                                            |
+| ----------------------------- | ----------------------------------------------- |
+| `docs/specs/<機能名>/`        | `requirements.md` / `design.md` / `tasks.md`     |
+| `docs/guide-workflow.md`      | 開発手順の詳細                                  |
+| `.claude/skills/*/SKILL.md`   | スキル本体                                      |
+| `.claude/skills/spec/templates/` | 3文書のテンプレート                          |
 
-## Development Guidelines
-- Think in English, generate responses in Japanese. All Markdown content written to project files (e.g., requirements.md, design.md, tasks.md, research.md, validation reports) MUST be written in the target language configured for this specification (see spec.json.language).
+## フロー
 
-## Minimal Workflow
-- Phase 0 (optional): `/kiro-steering`, `/kiro-steering-custom`
-- Discovery: `/kiro-discovery "idea"` — determines action path, writes brief.md + roadmap.md for multi-spec projects
-- Phase 1 (Specification):
-  - Single spec: `/kiro-spec-quick {feature} [--auto]` or step by step:
-    - `/kiro-spec-init "description"`
-    - `/kiro-spec-requirements {feature}`
-    - `/kiro-validate-gap {feature}` (optional: for existing codebase)
-    - `/kiro-spec-design {feature} [-y]`
-    - `/kiro-validate-design {feature}` (optional: design review)
-    - `/kiro-spec-tasks {feature} [-y]`
-  - Multi-spec: `/kiro-spec-batch` — creates all specs from roadmap.md in parallel by dependency wave
-- Phase 2 (Implementation): `/kiro-impl {feature} [tasks]`
-  - Without task numbers: autonomous mode (subagent per task + independent review + final validation)
-  - With task numbers: manual mode (selected tasks in main context, still reviewer-gated before completion)
-  - `/kiro-validate-impl {feature}` (standalone re-validation)
-- Progress check: `/kiro-spec-status {feature}` (use anytime)
+```
+/spec <機能名>    requirements → design → tasks を順に作る
+                  各段の終わりで停止し、人が確認する
+   ↓
+/impl <機能名>    タスクを上から実装し、タスクごとに実際に検証する
+                  コミットせず、全タスク完了後に通しレビューして停止する
+   ↓
+人がコミット      差分をレビューして rule-git.md に従いコミット・プルリク
+```
 
-## Skills Structure
-Skills are located in `.claude/skills/kiro-*/SKILL.md`
-- Each skill is a directory with a `SKILL.md` file
-- Skills run inline with access to conversation context
-- Skills may delegate parallel research to subagents for efficiency
-- Additional files (templates, examples) can be added to skill directories
-- `kiro-review` — task-local adversarial review protocol used by reviewer subagents
-- `kiro-debug` — root-cause-first debug protocol used by debugger subagents
-- `kiro-verify-completion` — fresh-evidence gate before success or completion claims
-- **If there is even a 1% chance a skill applies to the current task, invoke it.** Do not skip skills because the task seems simple.
+- **文書の初稿は AI が書き、人がレビューする。** ただし「未決事項」は勝手に決めず、人に聞く
+- **タスクごとにコミットしない。** 人が最後に通しでコードをレビューする
+- **タスクごとに実際に検証する。** 「通るはず」で先に進まない
 
-## Development Rules
-- 3-phase approval workflow: Requirements → Design → Tasks → Implementation
-- Human review required each phase; use `-y` only for intentional fast-track
-- Keep steering current and verify alignment with `/kiro-spec-status`
-- Follow the user's instructions precisely, and within that scope act autonomously: gather the necessary context and complete the requested work end-to-end in this run, asking questions only when essential information is missing or the instructions are critically ambiguous.
+## 検証
 
-## Steering Configuration
-- Load entire `.kiro/steering/` as project memory
-- Default files: `guide-product.md`, `guide-tech.md`, `guide-structure.md`
-- Custom files are supported (managed via `/kiro-steering-custom`)
+`tasks.md` の `_検証:_` に手段を書き、`/impl` が実行する。
 
-## File Naming Prefixes
-- `guide-*.md`: 判断の前提になる知識・背景（`.kiro/steering/` の steering はすべてこれ）
-- `rule-*.md`: 必ず守る作業ルール（`.claude/rules/` に置き、Claude Code が毎回読み込む）
-- kiro スキル内の steering ファイル名は `guide-` 付きに書き換えてある。cc-sdd を更新・再インストールすると元の名前に戻るので、その際は置換し直す
+| 手段 | 使いどころ | 証拠 |
+| ---- | ---------- | ---- |
+| コマンド | 終了コードで判定できるもの | 残る |
+| Playwright | 回帰させたいもの | テストとして残る |
+| ブラウザ（chrome-devtools MCP） | 見た目・実挙動の初回確認 | 残らない。報告で言語化する |
+
+回帰が要るものにブラウザ検証を割り当てない。
+
+ブラウザ検証は `.mcp.json` の chrome-devtools MCP を使う。`--isolated=true` なので毎回まっさらなプロファイルで起動し、拡張は `install_extension` で毎回読み込む（`--load-extension` は効かない）。
+
+## 失敗したとき
+
+`debug` スキルで原因から調べて修正し、再検証する。**同じタスクで3回失敗したら停止して人に返す。**推測で直さない。
+
+## 並行開発
+
+並行は**機能単位**。影響範囲が分かれている機能を別の worktree で同時に進める。
+
+```bash
+git worktree add ../site-blocker-wt/<機能名> -b feat/<機能名>
+```
+
+`tasks.md` の `_並行: 不可_` は同一機能内のタスクの順序制約であり、worktree の単位ではない。
+
+## スキル
+
+- `spec` — requirements → design → tasks を作る
+- `impl` — tasks.md を実装し、検証まで回す
+- `review` — 実装を spec・スコープ・検証証拠に照らして敵対的にレビューする（`impl` が呼ぶ）
+- `debug` — 行き詰まったときに根本原因から調べる（`impl` が呼ぶ）
+- `verify-completion` — 完了・成功の主張の前に新しい証拠で確認する（`impl` が呼ぶ）
+
+**1%でも当てはまる可能性があればスキルを呼ぶ。簡単そうに見えても飛ばさない。**
+
+## ルール
+
+- 英語で考え、日本語で応答する。プロジェクトのファイルに書く Markdown も日本語で書く
+- 指示された範囲を正確に守り、その範囲内では自律的に完了まで進める。情報が足りないか、解釈が分かれて成果物が変わる場合だけ質問する
+- 文書の分量上限を守る（requirements 80行 / design 150行 / tasks 100行）。超えるなら機能を分割する
+- 秘密情報（APIキーなど）は文書・コミットに含めない。トークンや認証情報が要る MCP サーバーは、コミット対象の `.mcp.json` に書かず、ユーザースコープ（`~/.claude.json`）に置く
+- 共有するもの（`.claude/rules/`、spec、URL の契約、ルート設定）は、ブランチを切る前に main で確定させる
+
+## ファイル名のプレフィックス
+
+- `guide-*.md`: 判断の前提になる知識・背景
+- `rule-*.md`: 必ず守る作業ルール
+- どちらも `.claude/rules/` に置けば毎回自動で読み込まれる

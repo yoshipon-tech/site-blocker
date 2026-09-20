@@ -2,6 +2,6 @@
 
 <!-- 何を・なぜ変えたか -->
 
-## 関連spec/タスク
+## 関連spec
 
-<!-- 例: .kiro/specs/redirect-rules — タスク 1.1, 1.2（関連 spec がなければ「なし」） -->
+<!-- 例: docs/specs/redirect-rules.md（関連 spec がなければ「なし」） -->
