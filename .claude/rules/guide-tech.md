@@ -47,6 +47,9 @@ Chrome 拡張と、静的サイトとして公開するブロック画面の2つ
 ```bash
 # Tools: mise install
 # Install: pnpm install
+# Build all: pnpm build
+# Test all: pnpm test
+# Single app: pnpm --filter @site-blocker/extension run build（web は @site-blocker/web）
 ```
 
 ## Key Technical Decisions

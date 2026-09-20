@@ -1,0 +1,9 @@
+{
+  "name": "site-blocker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "pnpm -r run build",
+    "test": "pnpm -r run test"
+  }
+}
