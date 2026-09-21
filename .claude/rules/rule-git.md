@@ -39,7 +39,8 @@ Conventional Commits に従う。type と scope は英語、要約と本文は�
 - 1コミット1目的。整形だけの変更は機能変更と混ぜない
 - **`Co-Authored-By: Claude ...` を付けない。** 生成ツールの署名や「Generated with」表記も同様に書かない。コミットは人がレビューして出すものなので、履歴に残すのは変更の理由だけにする
 - URL の契約（`/blocked/#<元URL>`）を変える場合は本文にその旨を書く
-- 機械的な強制（commitlint、Git フック、CI）は現時点ではしない
+- push 前に husky の `pre-push` フックが一括チェック（`pnpm check`）を自動で実行し、失敗したら push を止める。`--no-verify` で飛ばさない
+- コミットメッセージの機械的な検査（commitlint）と、GitHub 上で検査を走らせる CI は現時点ではしない
 
 ```
 feat(redirect-rules): インストール時に dynamic ルールを登録する
