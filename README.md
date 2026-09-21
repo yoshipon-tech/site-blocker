@@ -20,13 +20,13 @@
 拡張: declarativeNetRequest の redirect ルールに一致
   │
   ▼
-https://<GitHub Pages>/blocked#https://x.com/home
+https://yoshipon-tech.github.io/site-blocker/blocked/#https://x.com/home
   │
   ▼
 Web: location.hash を読んで表示
 ```
 
-拡張と Web をつなぐ契約は `/blocked#<元URL>` という URL の形だけです。
+拡張と Web をつなぐ契約はこの URL の形だけです。詳細は [.claude/rules/guide-tech.md](.claude/rules/guide-tech.md) の「URL の契約」にあります。
 
 ### リダイレクトルール
 
@@ -38,7 +38,7 @@ Web: location.hash を読んで表示
   "priority": 1,
   "action": {
     "type": "redirect",
-    "redirect": { "regexSubstitution": "https://<GitHub Pages>/blocked#\\0" }
+    "redirect": { "regexSubstitution": "https://yoshipon-tech.github.io/site-blocker/blocked/#\\0" }
   },
   "condition": {
     "regexFilter": "^https?://([^/]*\\.)?x\\.com/.*",

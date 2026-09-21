@@ -138,7 +138,7 @@ Claude は止まったまま報告を出す。人がやること。
 
 このリポジトリで必ず Playwright に落とすもの。
 
-- `/blocked#<元URL>` という URL の形（拡張と Web をつなぐ唯一の契約）
+- `/blocked/#<元URL>` という URL の形（拡張と Web をつなぐ唯一の契約）
 - 元URLに `#` や `&` が含まれる場合の挙動
 
 markdown に書いた仕様は古くなっても誰も気づかないが、テストは壊れて気づく。
@@ -206,7 +206,7 @@ Playwright は MCP ではなくプロジェクトの開発依存として入れ�
 5. プルリクを出して main にマージ
 ```
 
-- `.claude/rules/`・spec・URL の契約（`/blocked#<元URL>`）は分岐前に main で確定させる
+- `.claude/rules/`・spec・URL の契約（`/blocked/#<元URL>`）は分岐前に main で確定させる
 - 実装中に spec を変えたくなったら、main で直してから各ブランチに取り込む
 - `pnpm-lock.yaml` が衝突したら手で直さず、マージ後に `pnpm install` で作り直す
 - `tasks.md` の `_並行: 不可_` は**同一機能内のタスクの順序制約**であり、worktree の単位ではない

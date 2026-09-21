@@ -7,13 +7,27 @@ Chrome 拡張と、静的サイトとして公開するブロック画面の2つ
 ```
 ユーザーが x.com を開く
   → 拡張: declarativeNetRequest の redirect ルールに一致
-  → https://<GitHub Pages>/blocked#https://x.com/home
+  → https://yoshipon-tech.github.io/site-blocker/blocked/#https://x.com/home
   → Web: location.hash を読んで表示
 ```
 
 - **拡張（`apps/extension`）**: ブロックリストを持ち、リダイレクトルールを登録する。表示の責務は持たない
 - **Web（`apps/web`）**: 受け取った元URLを表示する。ブロック判定の責務は持たない
-- **契約**: 両者の間のインターフェースは `/blocked#<元URL>` という URL の形のみ。これを変える場合は両側の spec を同時に見直す
+- **契約**: 両者の間のインターフェースは上記 URL の形のみ。これを変える場合は両側の spec を同時に見直す
+
+### URL の契約
+
+| 項目 | 決めたこと |
+| ---- | ---------- |
+| オリジン | `https://yoshipon-tech.github.io`（GitHub Pages の既定ドメイン。カスタムドメインは公開前に判断する） |
+| ベースパス | `/site-blocker/`（リポジトリ名。`apps/web` の Vite `base` に設定する） |
+| ブロック画面のパス | `/blocked/`（**末尾スラッシュ付き**。`blocked/index.html` として出力する） |
+| 元URL | フラグメントに**エンコードせず**そのまま置く。`regexSubstitution` は `#\0` |
+
+- 拡張は末尾スラッシュ付きの URL を指す。スラッシュ無しだと GitHub Pages が 301 リダイレクトするため、1ホップ無駄になる
+- Web 側は `location.hash` の先頭 `#` を落として元URLとして扱う。元URLに `#` が含まれていても、`location.hash` は最初の `#` 以降すべてを返すので復元できる
+- ルート（`/site-blocker/`）はブロック画面が占有しない。プライバシーポリシーなど公開時に必要なページを後から置けるようにするため
+- **この URL は配布した拡張に埋め込まれる。** 公開後に変えると、更新していないユーザーの拡張が古い URL を指し続ける
 
 ## Core Technologies
 

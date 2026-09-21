@@ -53,17 +53,19 @@
 
 `blocked-page` と `redirect-rules` は影響範囲が分かれているので並行もできるが、**1人で進めるなら直列で `blocked-page` → `redirect-rules` の順**にする。リダイレクト先が実在してから拡張を作れば、検証が「アドレスバーのURLを読む」ではなく「実際にブロック画面が出る」になり、worktree を2つ管理する手間も要らない。
 
-### 着手前に main で決めること（#3）
+### 着手前に main で決めること（#3: 決定済み）
 
-**先に決めないと両方やり直しになる。**
+URL の契約は `.claude/rules/guide-tech.md` の「URL の契約」で確定した。
 
-| 決めること | なぜ先か |
-| ---- | ---- |
-| リダイレクト先のオリジン | 拡張のルールに埋め込まれる。開発中は GitHub Pages の既定ドメインを使う |
-| パス | `/blocked` で確定か。Pages のサブパス（`/site-blocker/blocked`）をどう扱うか |
-| フラグメントの形 | `#<元URL>` を生で入れるか、エンコードするか |
+```
+https://yoshipon-tech.github.io/site-blocker/blocked/#https://x.com/home
+```
 
-`guide-tech.md` には `/blocked#<元URL>` としか書いていないので、**サブパスの扱いを追記してから分岐する**。
+- オリジンは GitHub Pages の既定ドメイン（カスタムドメインは公開前に判断する。#16）
+- ベースパスは `/site-blocker/`、ブロック画面は `/blocked/`（末尾スラッシュ付き）
+- 元URLはエンコードせずフラグメントに置く
+
+ルートをブロック画面が占有しないのは、プライバシーポリシーなど公開時に必要なページを後から置けるようにするため。
 
 ### 1番目: `blocked-page` — `apps/web`, `.github/workflows`（#4）
 
