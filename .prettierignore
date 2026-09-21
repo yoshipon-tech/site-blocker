@@ -1,0 +1,8 @@
+# Markdown は対象外（表の整形が一斉に変わるため）
+*.md
+
+# pnpm が管理する
+pnpm-lock.yaml
+
+# 個人の設定（グローバルの gitignore で無視されているが、Prettier はそれを読まない）
+.claude/settings.local.json
