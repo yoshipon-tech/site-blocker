@@ -28,7 +28,11 @@ Web: location.hash を読んで表示
 
 拡張と Web をつなぐ契約はこの URL の形だけです。詳細は [.claude/rules/guide-tech.md](.claude/rules/guide-tech.md) の「URL の契約」にあります。
 
+ブロック画面を直接開いて確認するときは `https://yoshipon-tech.github.io/site-blocker/blocked#https://x.com/home` を使います。
+
 ### リダイレクトルール
+
+ブロックしたいサイトはリダイレクロルールで指定します。
 
 `regexFilter` のマッチ全体（`\0`）を `regexSubstitution` でフラグメントに埋め込みます。
 
