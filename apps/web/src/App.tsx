@@ -24,10 +24,13 @@ export function App() {
       <main className="content">
         {blocked ? (
           <p className="lead">
-            <strong>{blocked.host ?? blocked.url}</strong> は今ブロックしています
+            <strong>{blocked.host ?? blocked.url}</strong>{" "}
+            は今ブロックしています
           </p>
         ) : (
-          <p className="lead">このページは site-blocker 拡張がブロックしたときに開く画面です</p>
+          <p className="lead">
+            このページは site-blocker 拡張がブロックしたときに開く画面です
+          </p>
         )}
 
         <h1 className="headline">
@@ -37,7 +40,11 @@ export function App() {
         </h1>
 
         {canGoBack && (
-          <button type="button" className="back" onClick={() => window.history.back()}>
+          <button
+            type="button"
+            className="back"
+            onClick={() => window.history.back()}
+          >
             前のページに戻る
           </button>
         )}
