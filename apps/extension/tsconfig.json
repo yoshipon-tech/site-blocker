@@ -1,3 +1,6 @@
 {
-  "extends": "./.wxt/tsconfig.json"
+  "extends": "./.wxt/tsconfig.json",
+  // exclude は継承元を上書きするので、WXT の既定（node_modules・.output）も書き直す。
+  // e2e/ と playwright.config.ts は Node の型が要るので e2e/tsconfig.json で検査する
+  "exclude": ["node_modules", ".output", "e2e", "playwright.config.ts"]
 }
