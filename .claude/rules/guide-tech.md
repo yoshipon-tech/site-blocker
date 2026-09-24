@@ -31,7 +31,7 @@ Chrome 拡張と、静的サイトとして公開するブロック画面の2つ
 
 ## Core Technologies
 
-- **Language**: TypeScript
+- **Language**: TypeScript 6 系（typescript-eslint が 7 系に未対応のため。対応したら全体を 7 系に上げる）
 - **Extension**: [WXT](https://wxt.dev/)（Manifest V3）
 - **Block page**: Vite + React（ビルド結果を静的サイトとして公開する）
 - **Hosting**: GitHub Pages
@@ -63,6 +63,10 @@ Chrome 拡張と、静的サイトとして公開するブロック画面の2つ
 # Install: pnpm install
 # Build all: pnpm build
 # Test all: pnpm test
+# Type check: pnpm typecheck
+# Lint: pnpm lint（ESLint）/ pnpm lint:workflows（actionlint）
+# Format: pnpm format（確認だけなら pnpm format:check。Markdown は対象外）
+# All checks: pnpm check（push 前に husky が自動で実行する）
 # Single app: pnpm --filter @site-blocker/extension run build（web は @site-blocker/web）
 ```
 

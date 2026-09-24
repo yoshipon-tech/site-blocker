@@ -1,0 +1,12 @@
+# mise.toml で固定した Node.js・pnpm で一括チェックを走らせる。
+# エディタの Git 画面などから push すると mise が PATH にないので、既定のインストール先も探す。
+if ! command -v mise >/dev/null 2>&1; then
+  PATH="/opt/homebrew/bin:$HOME/.local/bin:$PATH"
+fi
+
+if ! command -v mise >/dev/null 2>&1; then
+  echo "pre-push: mise が見つからないため push を中止します。mise を入れるか PATH に追加してください" >&2
+  exit 1
+fi
+
+mise exec -- pnpm run check
