@@ -1,0 +1,12 @@
+{
+  // Playwright の型は Node.js の型（Buffer など）を参照する。拡張のソースに Node の型を持ち込まないよう分ける
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": [".", "../playwright.config.ts"]
+}
