@@ -1,5 +1,5 @@
 export type BlockedUrl = {
-  /** 表示用の元URL。パーセントエンコードは読める形に戻す */
+  /** 表示用の元URL。パーセントエンコードは戻さず、届いたまま */
   url: string;
   /** 見出しに出すホスト名。先頭の www. は落とす。URL として読めなければ null */
   host: string | null;
@@ -10,24 +10,15 @@ export type BlockedUrl = {
  * 元URLに # が含まれていても、location.hash は最初の # 以降をすべて返すので先頭1文字だけ落とせばよい。
  */
 export function parseBlockedUrl(hash: string): BlockedUrl | null {
-  const raw = hash.startsWith("#") ? hash.slice(1) : hash;
-  if (raw === "") return null;
+  const url = hash.startsWith("#") ? hash.slice(1) : hash;
+  if (url === "") return null;
 
-  return { url: decode(raw), host: hostOf(raw) };
+  return { url, host: hostOf(url) };
 }
 
-function decode(raw: string): string {
+function hostOf(url: string): string | null {
   try {
-    // decodeURIComponent だと %2F や %26 まで戻り、URL の区切りが変わって見えるので decodeURI にする
-    return decodeURI(raw);
-  } catch {
-    return raw;
-  }
-}
-
-function hostOf(raw: string): string | null {
-  try {
-    const { hostname } = new URL(raw);
+    const { hostname } = new URL(url);
     if (hostname === "") return null;
     return hostname.replace(/^www\./, "");
   } catch {

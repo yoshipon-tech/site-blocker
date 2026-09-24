@@ -26,19 +26,16 @@ describe("parseBlockedUrl", () => {
     );
   });
 
-  it("パーセントエンコードされた日本語を読める形に戻す", () => {
+  it("パーセントエンコードはデコードせず届いたまま返す", () => {
     expect(
       parseBlockedUrl("#https://x.com/search?q=%E6%97%A5%E6%9C%AC")?.url,
-    ).toBe("https://x.com/search?q=日本");
-  });
-
-  it("URL の区切りを表すエンコード（%26 など）は戻さない", () => {
+    ).toBe("https://x.com/search?q=%E6%97%A5%E6%9C%AC");
     expect(parseBlockedUrl("#https://x.com/?q=a%26b")?.url).toBe(
       "https://x.com/?q=a%26b",
     );
   });
 
-  it("デコードできない % を含むときは届いたまま返す", () => {
+  it("デコードできない % を含んでも届いたまま返す", () => {
     expect(parseBlockedUrl("#https://x.com/?q=100%")?.url).toBe(
       "https://x.com/?q=100%",
     );

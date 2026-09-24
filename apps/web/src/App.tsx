@@ -22,14 +22,10 @@ export function App() {
   return (
     <div className="page">
       <main className="content">
-        {blocked ? (
+        {blocked && (
           <p className="lead">
             <strong>{blocked.host ?? blocked.url}</strong>{" "}
             は今ブロックしています
-          </p>
-        ) : (
-          <p className="lead">
-            このページは site-blocker 拡張がブロックしたときに開く画面です
           </p>
         )}
 

@@ -1,0 +1,8 @@
+{
+  // Playwright の型は Node.js の型（Buffer など）を参照する。ブラウザ向けの src/ に Node の型を持ち込まないよう分ける
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": ["."]
+}
