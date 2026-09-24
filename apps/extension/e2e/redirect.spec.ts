@@ -84,8 +84,11 @@ test("クエリとフラグメントを含む元URLを、欠かさずエンコ�
 test("同じプロファイルで起動し直しても、ルールが重複せずにブロックし続ける", async () => {
   const profile = test.info().outputPath("restart-profile");
   const first = await launch(profile);
-  expect(await ruleCount(first.worker)).toBe(2);
-  await first.context.close();
+  try {
+    expect(await ruleCount(first.worker)).toBe(2);
+  } finally {
+    await first.context.close();
+  }
 
   const second = await launch(profile);
   try {
