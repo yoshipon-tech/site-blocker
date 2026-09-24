@@ -18,7 +18,7 @@ background の `runtime.onInstalled`（インストール・更新・再読み�
 | 登録は `runtime.onInstalled` で「既存の dynamic ルールを全部外す → 組み立てたルールを入れる」を1回の `updateDynamicRules` で行う | dynamic ルールはブラウザの再起動と拡張の更新をまたいで残る（同ドキュメント）。インストール・更新・再読み込みはどれも `onInstalled` が発火するので、ここで入れ直せばリストの変更が反映され（3.3）、重複もしない（3.4）。再起動では何もしなくても残る（3.2） | `onStartup` でも入れ直す: 残っているので不要 / static ルールセット（manifest）: 実行時に書き換えられず、`guide-tech.md` の「dynamic ルール」の方針と #10 以降に合わない | #10 で storage に移したら、storage の変更時にも同じ関数を呼ぶ |
 | ルールの組み立て（`buildRules`）と入れ直し（`syncRules`）は、`chrome` を直接触らない純粋な関数にし、`declarativeNetRequest` を引数で受け取る | Vitest で `chrome` なしに、ID・条件・置換・古いルールの除去を確かめられる | background に直書き: 単体テストできない | なし |
 | E2E は `@playwright/test` を `apps/extension` に入れ、`chromium.launchPersistentContext`（`channel: "chromium"`、`--load-extension`）でビルド済みの拡張を読み込む。`context.route` でブロック画面・ブロックリストのサイト・ほかのサイトへの通信をすべて手元の応答に差し替える。スクリプトは `test:e2e`（`wxt build && playwright test`）として `test` と分ける | 拡張は永続コンテキストでしか動かず、ヘッドレスでは `chromium` チャンネルが要る（[Playwright のドキュメント](https://playwright.dev/docs/chrome-extensions)）。外部に接続しないので結果が安定する（6.2）。`test` と分けるのは `blocked-page` と同じ理由（ブラウザのない環境でも `pnpm check` が通る） | 実サイトに接続する: ネットワークと公開中の画面に依存する / `test` に含める: 一括チェックにブラウザが必須になる | E2E を増やすとローカルの確認が遅くなる |
-| 開発用に `dev`（`wxt`）を足す | WXT の開発サーバーが拡張を読み込んだ Chrome を起動し、変更を再ビルドして反映する（5.1） | なし | なし |
+| 開発用に `dev`（`wxt`）を足し、`web-ext` を devDependency に入れる | WXT の開発サーバーが拡張を読み込んだ Chrome を起動し、変更を再ビルドして反映する（5.1）。WXT 0.21 では `web-ext` が任意の peer dependency で、入っていないと Chrome を起動せず手動での読み込みを求める（実装時に判明） | なし | なし |
 
 ## 構成
 
@@ -28,7 +28,8 @@ background の `runtime.onInstalled`（インストール・更新・再読み�
 site-blocker/
 ├── pnpm-lock.yaml                     変更
 └── apps/extension/
-    ├── package.json                   変更（dev / test:e2e、@playwright/test・@types/node）
+    ├── package.json                   変更（dev / test:e2e、@playwright/test・@types/node・web-ext）
+    ├── tsconfig.json                  変更（e2e/ と playwright.config.ts を外す）
     ├── wxt.config.ts                  変更（manifest の権限）
     ├── vitest.config.ts               変更（対象を utils/ に絞る）
     ├── entrypoints/background.ts      変更
@@ -36,7 +37,7 @@ site-blocker/
     ├── utils/rules.ts                 新規
     ├── utils/rules.test.ts            新規
     ├── playwright.config.ts           新規
-    └── e2e/redirect.spec.ts, tsconfig.json  新規
+    └── e2e/redirect.spec.ts, fixtures.ts, tsconfig.json  新規
 ```
 
 ### ファイルと責務
@@ -49,7 +50,8 @@ site-blocker/
 | `entrypoints/background.ts` | 変更 | `browser.runtime.onInstalled` で `syncRules(browser.declarativeNetRequest, BLOCKLIST)` |
 | `wxt.config.ts` | 変更 | `manifest.permissions: ["declarativeNetRequestWithHostAccess"]`、`host_permissions: hostPermissions(BLOCKLIST)` |
 | `playwright.config.ts` | 新規 | Chromium のみ、`testDir: "e2e"` |
-| `e2e/redirect.spec.ts` | 新規 | 拡張を読み込んだ永続コンテキストを作り、1.x・2.x・3.2・3.4 を確かめる |
+| `e2e/fixtures.ts` | 新規 | 拡張を読み込んだ永続コンテキストを起動し、通信を手元の応答に差し替え、ルールの登録を待つ |
+| `e2e/redirect.spec.ts` | 新規 | 1.x・2.x・3.2・3.4 を確かめる |
 | `e2e/tsconfig.json` | 新規 | Playwright の型が要る Node の型を e2e だけに入れる（`blocked-page` と同じ構成） |
 
 ## シーケンス
