@@ -16,11 +16,11 @@ export type DynamicRulesApi = {
  * ID は並び順で 1..n。サイト単位で外せるように分けておく（一時解除で使う）
  */
 export function buildRules(blocklist: readonly string[]): Rule[] {
-  return blocklist.map((domain, index) => ({
+  return blocklist.map((domain, index): Rule => ({
     id: index + 1,
     priority: 1,
     action: {
-      type: "redirect" as Browser.declarativeNetRequest.RuleActionType,
+      type: "redirect",
       // \0 は一致した URL 全体。パス・クエリ・フラグメントまで含み、エンコードし直さない
       redirect: { regexSubstitution: `${BLOCKED_PAGE_URL}#\\0` },
     },
@@ -30,9 +30,7 @@ export function buildRules(blocklist: readonly string[]): Rule[] {
       // サブドメインにも一致する
       requestDomains: [domain],
       // ページの遷移だけを止め、画像・スクリプト・iframe は止めない
-      resourceTypes: [
-        "main_frame" as Browser.declarativeNetRequest.ResourceType,
-      ],
+      resourceTypes: ["main_frame"],
     },
   }));
 }
