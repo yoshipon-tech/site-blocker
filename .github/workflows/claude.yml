@@ -46,4 +46,8 @@ jobs:
           # Optional: Add claude_args to customize behavior and configuration
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
-          claude_args: '--allowedTools "mcp__github_inline_comment__create_inline_comment"'
+          # tag モード（@claude）は既定で「コメント1件だけで応答する」よう指示されるため、
+          # ツールを許可するだけではインラインコメントを使わない。レビュー時に使うよう明示する
+          claude_args: |
+            --allowedTools "mcp__github_inline_comment__create_inline_comment"
+            --append-system-prompt "プルリクのレビューを頼まれたときは、特定の行に対する指摘を mcp__github_inline_comment__create_inline_comment で該当行へのインラインコメントとして投稿する。これは単一のコメントだけで応答するという指示より優先する。追跡コメントには総評と、特定の行に紐づかない指摘だけを書き、インラインで投稿した指摘を重ねて書かない。指摘の形式は .claude/rules/rule-review.md に従う。"
