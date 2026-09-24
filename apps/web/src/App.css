@@ -1,0 +1,127 @@
+:root {
+  --color-text: #1e2a3a;
+  --color-muted: #4a5668;
+  --color-sky-top: #dde6ef;
+  --color-sky-bottom: #f4ebe2;
+  --color-sun: #f2a641;
+  --color-sun-glow: rgba(242, 166, 65, 0.35);
+  --color-sea: #3f5c6e;
+  --color-button: #1e2a3a;
+  --color-button-text: #ffffff;
+
+  --sea-height: 18vh;
+  --sun-size: clamp(160px, 23vw, 300px);
+
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Hiragino Sans",
+    "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", sans-serif;
+  color: var(--color-text);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-sky-bottom);
+}
+
+.page {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(
+    to bottom,
+    var(--color-sky-top),
+    var(--color-sky-bottom)
+  );
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  padding: 80px 16px calc(var(--sea-height) + 32px) clamp(16px, 8vw, 102px);
+}
+
+.lead {
+  margin: 0;
+  font-size: 15px;
+  color: var(--color-muted);
+}
+
+.lead strong {
+  color: var(--color-text);
+}
+
+.headline {
+  margin: 28px 0 0;
+  font-size: clamp(40px, 5.2vw, 66px);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+}
+
+.back {
+  margin-top: 56px;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-button);
+  color: var(--color-button-text);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.back:hover {
+  opacity: 0.88;
+}
+
+.back:focus-visible {
+  outline: 3px solid var(--color-sun);
+  outline-offset: 3px;
+}
+
+.url {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 32px 0 0;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.url-value {
+  overflow-wrap: anywhere;
+}
+
+.scenery {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.sun {
+  position: absolute;
+  left: 76%;
+  /* 見本どおり、太陽の下 1/4 ほどを海に沈める */
+  bottom: calc(var(--sea-height) - var(--sun-size) / 4);
+  width: var(--sun-size);
+  height: var(--sun-size);
+  border-radius: 50%;
+  background: var(--color-sun);
+  box-shadow: 0 0 120px 60px var(--color-sun-glow);
+  transform: translateX(-50%);
+}
+
+.sea {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--sea-height);
+  background: var(--color-sea);
+}

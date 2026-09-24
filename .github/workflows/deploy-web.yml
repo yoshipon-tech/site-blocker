@@ -1,0 +1,61 @@
+name: Deploy web
+
+on:
+  push:
+    branches: [main]
+    # ブロック画面のビルド結果に効くファイルだけで公開する
+    paths:
+      - "apps/web/**"
+      - ".github/workflows/deploy-web.yml"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "mise.toml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# 公開を途中で打ち切らない
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Node.js・pnpm・actionlint を mise.toml の版で入れる
+      - uses: jdx/mise-action@v4
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm check
+
+      - run: pnpm --filter @site-blocker/web run build
+
+      - run: pnpm --filter @site-blocker/web exec playwright install --with-deps chromium
+
+      - run: pnpm --filter @site-blocker/web run test:e2e
+
+      - uses: actions/configure-pages@v6
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: apps/web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    # Pages への書き込み権限は deploy ジョブにだけ渡す
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}blocked/
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
