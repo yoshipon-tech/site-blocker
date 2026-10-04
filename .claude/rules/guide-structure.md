@@ -21,6 +21,11 @@
 **Purpose**: GitHub Actions のワークフローを置く
 **Example**: `apps/web` を GitHub Pages へ公開するワークフロー
 
+### Packages
+**Location**: `/packages/<name>/`
+**Purpose**: 複数のアプリで共有するもの。デプロイ・配布の単位ではない
+**Example**: `packages/design-system`（デザインシステム Dawn。方針・トークン・部品のガイド・見本画像）。拡張のポップアップと Web のブロック画面の見た目はこれに従う。`package.json` はまだなく、アプリは import していない（値を写して使っている）。import するようになったら workspace に足す
+
 ### Workspace Root
 **Location**: `/`
 **Purpose**: `package.json`・`pnpm-workspace.yaml`・全パッケージ共通の設定のみ。アプリ固有のコードは置かない
@@ -44,7 +49,7 @@
 ## Import Organization
 
 - `apps/extension` と `apps/web` の間で import しない（共有するのは URL の形だけ）
-- 共通コードが必要になった場合は `packages/<name>/` を作る案とし、作る前に `.claude/rules/guide-structure.md` を更新する
+- 共通コードが必要になった場合は `packages/<name>/` に置き、作る前に `.claude/rules/guide-structure.md` の Packages に足す
 
 ## Code Organization Principles
 
