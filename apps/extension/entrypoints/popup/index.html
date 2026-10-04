@@ -11,6 +11,16 @@
         <h1>ブロックするサイト</h1>
         <div class="sun" aria-hidden="true"></div>
       </header>
+      <section class="current" aria-labelledby="current-label" hidden>
+        <div class="current-body">
+          <p id="current-label" class="current-label">今開いているページ</p>
+          <p id="current-site" class="current-site"></p>
+        </div>
+        <button id="current-add" type="button" class="btn-primary" hidden>
+          追加
+        </button>
+        <span id="current-status" class="current-status" hidden>登録済み</span>
+      </section>
       <form id="add" class="add">
         <label for="site-input" class="visually-hidden">追加するサイト</label>
         <div class="add-row">
@@ -18,10 +28,10 @@
             id="site-input"
             class="field"
             type="text"
-            placeholder="ブロックするサイト"
+            placeholder="別のサイトを追加"
             autocomplete="off"
           />
-          <button type="submit" class="btn-primary">追加</button>
+          <button type="submit" class="btn-secondary">追加</button>
         </div>
         <p id="message" class="message" role="status"></p>
       </form>
