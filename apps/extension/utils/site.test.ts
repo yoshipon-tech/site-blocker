@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { checkAdd, describeEntries, MAX_SITES, normalizeSite } from "./site";
+import {
+  checkAdd,
+  describeCurrentPage,
+  describeEntries,
+  MAX_SITES,
+  normalizeSite,
+} from "./site";
 
 describe("normalizeSite", () => {
   it.each([
@@ -90,6 +96,73 @@ describe("checkAdd", () => {
       reason: "登録できるのは 1,000 件までです",
     });
     expect(checkAdd(full.slice(1), "x.com")).toEqual({ ok: true });
+  });
+
+  it("そのものと親の両方があるときは、そのものとして断る", () => {
+    expect(checkAdd(["x.com", "news.x.com"], "news.x.com")).toEqual({
+      ok: false,
+      reason: "news.x.com は既にブロックしています",
+    });
+  });
+});
+
+describe("describeCurrentPage", () => {
+  it("まだないサイトは、入力欄と同じ規則で作ったドメインで追加できる", () => {
+    expect(describeCurrentPage("https://www.Note.com/foo?a=1", [])).toEqual({
+      kind: "addable",
+      domain: "note.com",
+    });
+  });
+
+  it.each(["https://x.com/home", "https://news.x.com/", "http://www.x.com/"])(
+    "ブロックリストにあるサイトかそのサブドメイン %j は登録済み",
+    (url) => {
+      expect(describeCurrentPage(url, ["x.com"])).toMatchObject({
+        kind: "registered",
+      });
+    },
+  );
+
+  it("登録済みのドメインは、ブロックリストの親ではなく今のページのもの", () => {
+    expect(describeCurrentPage("https://news.x.com/", ["x.com"])).toEqual({
+      kind: "registered",
+      domain: "news.x.com",
+    });
+  });
+
+  it("名前の末尾が同じだけの別のサイトは追加できる", () => {
+    expect(describeCurrentPage("https://notx.com/", ["x.com"])).toEqual({
+      kind: "addable",
+      domain: "notx.com",
+    });
+  });
+
+  it("無効な項目は登録済みとして扱わない", () => {
+    expect(describeCurrentPage("https://x.com/", ["X.com"])).toMatchObject({
+      kind: "addable",
+    });
+  });
+
+  it.each([
+    ["URL を読めない", undefined],
+    ["新しいタブ", "chrome://newtab/"],
+    ["拡張のページ", "chrome-extension://abcdefghijklmnop/popup.html"],
+    ["ファイル", "file:///Users/me/a.html"],
+    [
+      "ブロック画面",
+      "https://yoshipon-tech.github.io/site-blocker/blocked/#https://x.com/",
+    ],
+  ])("%s は追加できない", (_, url) => {
+    expect(describeCurrentPage(url, [])).toEqual({ kind: "unavailable" });
+  });
+
+  it("上限に達していても追加できる（押したときに理由を出す）", () => {
+    const full = Array.from({ length: MAX_SITES }, (_, i) => `s${i}.com`);
+
+    expect(describeCurrentPage("https://note.com/", full)).toEqual({
+      kind: "addable",
+      domain: "note.com",
+    });
   });
 });
 

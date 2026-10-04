@@ -110,6 +110,73 @@ h1 {
   cursor: pointer;
 }
 
+/* Dawn の Button（Secondary）。今開いているページの「追加」より一段控えめにする */
+.btn-secondary {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 10px 20px;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* 今開いているページ。入力欄より目立たせるため、白い面に載せる */
+.current {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 14px 14px 14px var(--space-5);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  background: var(--field);
+}
+
+.current[hidden] {
+  display: none;
+}
+
+.current-body {
+  min-width: 0;
+}
+
+.current-body p {
+  margin: 0;
+}
+
+.current-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+}
+
+.current-site {
+  margin-top: var(--space-1);
+  font-size: 15px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+/* 追加できないときは、サイト名の代わりに理由を控えめに出す */
+.current-site.is-unavailable {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-muted);
+}
+
+.current-status {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-muted);
+}
+
 /* Dawn の Button（Quiet）。削除でも赤くしない */
 .btn-quiet {
   flex-shrink: 0;
@@ -127,6 +194,7 @@ h1 {
 
 .field:focus-visible,
 .btn-primary:focus-visible,
+.btn-secondary:focus-visible,
 .btn-quiet:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;

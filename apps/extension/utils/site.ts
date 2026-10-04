@@ -1,4 +1,4 @@
-import { isDomain, parseBlocklist } from "./blocklist";
+import { BLOCKED_PAGE_URL, isDomain, parseBlocklist } from "./blocklist";
 
 /** 登録できるサイトの上限。ルールは regexFilter を使うので、正規表現ルールの上限（1,000 件）に揃える */
 export const MAX_SITES = 1000;
@@ -47,19 +47,33 @@ export function normalizeSite(input: string): Checked<{ domain: string }> {
   return { ok: true, domain };
 }
 
+/**
+ * ドメインを既に含んでいる登録済みのドメイン（そのもの、または親）。
+ * requestDomains はサブドメインにも一致するので、親が入っていれば既に止まっている
+ */
+export function coveringDomain(
+  domains: readonly string[],
+  domain: string,
+): string | undefined {
+  // 親とそのもの両方が保存されていても、そのものを先に返す（checkAdd の理由を変えないため）
+  if (domains.includes(domain)) {
+    return domain;
+  }
+  return domains.find((existing) => domain.endsWith(`.${existing}`));
+}
+
 /** 正規化済みのドメインを、保存されたブロックリストに足してよいか */
 export function checkAdd(stored: unknown, domain: string): Checked<object> {
   const { domains } = parseBlocklist(stored);
 
-  if (domains.includes(domain)) {
+  const covering = coveringDomain(domains, domain);
+  if (covering === domain) {
     return { ok: false, reason: `${domain} は既にブロックしています` };
   }
-  // requestDomains はサブドメインにも一致するので、親が入っていれば既に止まっている
-  const parent = domains.find((existing) => domain.endsWith(`.${existing}`));
-  if (parent !== undefined) {
+  if (covering !== undefined) {
     return {
       ok: false,
-      reason: `${domain} は ${parent} に含まれるため、既にブロックしています`,
+      reason: `${domain} は ${covering} に含まれるため、既にブロックしています`,
     };
   }
   if (domains.length >= MAX_SITES) {
@@ -69,6 +83,35 @@ export function checkAdd(stored: unknown, domain: string): Checked<object> {
     };
   }
   return { ok: true };
+}
+
+/** ポップアップの「今開いているページ」のカードの状態 */
+export type CurrentPage =
+  { kind: "addable" | "registered"; domain: string } | { kind: "unavailable" };
+
+/**
+ * 今開いているタブの URL から、カードの状態を決める。ドメインは入力欄と同じ規則で作る。
+ * 上限はここでは見ない（押したときに addSite が理由を返す）
+ */
+export function describeCurrentPage(
+  url: string | undefined,
+  stored: unknown,
+): CurrentPage {
+  // URL を読めない（権限がない）ページと、ブロック画面自体は追加できない
+  if (url === undefined || url.startsWith(BLOCKED_PAGE_URL)) {
+    return { kind: "unavailable" };
+  }
+  // normalizeSite は http・https 以外のスキームを受け付けない
+  const normalized = normalizeSite(url);
+  if (!normalized.ok) {
+    return { kind: "unavailable" };
+  }
+
+  const { domain } = normalized;
+  const { domains } = parseBlocklist(stored);
+  return coveringDomain(domains, domain) === undefined
+    ? { kind: "addable", domain }
+    : { kind: "registered", domain };
 }
 
 /** 保存内容を、保存順に画面の行にする。ブロックに使われない項目には理由を付ける */
