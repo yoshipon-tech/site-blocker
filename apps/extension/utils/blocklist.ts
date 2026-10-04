@@ -26,6 +26,11 @@ export type ParsedBlocklist = {
 const DOMAIN =
   /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)*$/;
 
+/** ルールにできる形（小文字の ASCII のドメイン）か。編集画面も保存前にこれで確かめる */
+export function isDomain(value: unknown): value is string {
+  return typeof value === "string" && DOMAIN.test(value);
+}
+
 /**
  * 保存されたブロックリストを、ルールにできるドメインの配列にする。
  * updateDynamicRules は1件でも不正なら全体が失敗するので、不正な項目は捨てて残りを通す。
@@ -42,7 +47,7 @@ export function parseBlocklist(value: unknown): ParsedBlocklist {
   for (const entry of entries) {
     if (typeof entry !== "string") {
       ignored.push({ value: entry, reason: "文字列ではない" });
-    } else if (!DOMAIN.test(entry)) {
+    } else if (!isDomain(entry)) {
       ignored.push({
         value: entry,
         reason: "小文字のドメインではない（スキーム・パス・大文字などを含む）",
