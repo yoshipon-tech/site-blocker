@@ -3,6 +3,7 @@
 ## 方針
 
 WXT の `popup` エントリとして、ツールバーのアイコンから開くポップアップを足す。画面は React を使わず DOM を直接組み立て、値はすべて `textContent` で出す。
+見た目はデザインシステム Dawn（[claude.ai のアーティファクト](https://claude.ai/artifact/GuCM7ouVp2tEVfRrutQpBH)）のライトテーマに従う。書体は読み込まず、Dawn のフォールバック（Hiragino Sans / Noto Sans JP）に任せる。
 ポップアップは `blocklist`（`blocklist-storage` の `blocklistItem`）を読み書きするだけで、ルールの入れ直しは既存の background に任せる。
 権限を求めないと足せないサイトは、許可された時点で background が `permissions.onAdded` を受けて保存する。ポップアップが権限ダイアログで閉じても追加が失われないようにするため。
 入力の正規化・一覧の操作・権限との段取りは `chrome` を直接触らない関数に分け、Vitest で確かめる。
