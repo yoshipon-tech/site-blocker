@@ -22,18 +22,20 @@ export function App() {
   return (
     <div className="page">
       <main className="content">
-        {blocked && (
-          <p className="lead">
-            <strong>{blocked.host ?? blocked.url}</strong>{" "}
-            は今ブロックしています
-          </p>
-        )}
+        <div className="intro">
+          {blocked && (
+            <p className="lead">
+              <strong>{blocked.host ?? blocked.url}</strong>{" "}
+              は今ブロックしています
+            </p>
+          )}
 
-        <h1 className="headline">
-          いまは、
-          <br />
-          目の前のことに。
-        </h1>
+          <h1 className="headline">
+            いまは、
+            <br />
+            目の前のことに。
+          </h1>
+        </div>
 
         {canGoBack && (
           <button
@@ -55,7 +57,7 @@ export function App() {
 
       <div className="scenery" aria-hidden="true">
         <div className="sun" />
-        <div className="sea" />
+        <div className="ground" />
       </div>
     </div>
   );

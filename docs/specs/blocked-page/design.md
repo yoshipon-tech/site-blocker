@@ -5,6 +5,7 @@
 `apps/web` を Vite のマルチページ構成にし、ブロック画面を `blocked/index.html` として出力する。`base` を `/site-blocker/` にして、ビルド結果をそのまま GitHub Pages に置けば契約どおりの URL になるようにする。
 表示は React で、`location.hash` の解釈は純粋関数に切り出して単体テストする。画面全体の挙動（表示・外部送信なし）は Playwright でビルド結果に対して回帰させる。
 公開は GitHub Actions の公式 Pages デプロイで行い、ビルド・テストが通ったときだけ公開する。
+見た目はデザインシステム Dawn（[claude.ai のアーティファクト](https://claude.ai/artifact/GuCM7ouVp2tEVfRrutQpBH)）のライトテーマに従う。書体は下の決定どおり読み込まず、Dawn のフォールバック（Hiragino Sans / Noto Sans JP）に任せる。
 
 ## 決定と理由
 
