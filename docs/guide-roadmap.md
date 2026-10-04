@@ -21,7 +21,11 @@
 | spec | 状態 |
 | ---- | ---- |
 | `monorepo-setup` | 完了（pnpm workspace と2アプリの雛形） |
-| それ以降 | 未着手。[issue 一覧](https://github.com/yoshipon-tech/site-blocker/issues)（`spec` / `question` ラベル） |
+| `blocked-page`・`redirect-rules`・`lint-setup` | 完了（第一段階） |
+| `blocklist-storage`・`blocklist-ui` | 完了（ポップアップでブロックリストを編集できる） |
+| `service-worker-cleanup`・`current-tab-add` | 完了（service worker によるすり抜けの対策、今開いているページの追加） |
+| `ci`・一時解除（`temporary-unblock-*`） | 見送り（#9・#13〜#15 を not planned で閉じた） |
+| それ以降 | 未着手。[issue 一覧](https://github.com/yoshipon-tech/site-blocker/issues)（`spec` / `question` ラベル）。`schedule-blocking`（#12）・`settings-lock`（#29）・`privacy-page`（#33）・`store-release`（#17） |
 
 ## spec を切る基準
 
