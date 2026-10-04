@@ -1,0 +1,222 @@
+/*
+ * 見た目はデザインシステム Dawn（ライトテーマ）のポップアップに従う。
+ * 書体は外部から読み込まず、Zen Kaku Gothic New が手元になければ OS の書体になる
+ */
+:root {
+  --sky-top: #dce7f2;
+  --sun: #f2a541;
+  --ink: #1c2a3a;
+  /* Dawn の値（#4e5e70、5.3:1）では小さい文字が薄く見えたので濃くした（空色の地の上で 6.9:1） */
+  --ink-muted: #3f4d5c;
+  --hairline: #1c2a3a24;
+  --field: #ffffffb8;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-5: 20px;
+  --radius-md: 12px;
+  --radius-pill: 999px;
+
+  font-family:
+    "Zen Kaku Gothic New", "Hiragino Sans", "Noto Sans JP", sans-serif;
+  color: var(--ink);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  width: 360px;
+  background: var(--sky-top);
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-height: 480px;
+  padding: var(--space-5);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+h1 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+}
+
+/* 進捗を持たない画面なので、太陽は小さく1つだけ置く */
+.sun {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--sun);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+/* Dawn の SiteField */
+.add-row {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.field {
+  flex-grow: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  background: var(--field);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+}
+
+.field::placeholder {
+  color: var(--ink-muted);
+}
+
+/* Dawn の Button（Primary） */
+.btn-primary {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 10px 20px;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-pill);
+  background: var(--ink);
+  color: var(--sky-top);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Dawn の Button（Quiet）。削除でも赤くしない */
+.btn-quiet {
+  flex-shrink: 0;
+  min-height: 32px;
+  padding: 6px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--ink-muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.field:focus-visible,
+.btn-primary:focus-visible,
+.btn-quiet:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* 結果やエラーは色を変えず、入力欄の下に1行添える */
+.message {
+  margin: var(--space-2) 0 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink-muted);
+}
+
+.message:empty {
+  display: none;
+}
+
+.sites {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.overline {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+}
+
+/* Dawn の SiteRow。カードにせず、区切りは下線1本だけ */
+#sites {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#sites li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 11px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.site {
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.note {
+  display: block;
+  margin-top: var(--space-1);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--ink-muted);
+}
+
+.empty {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2);
+  padding-bottom: 32px;
+  text-align: center;
+}
+
+.empty[hidden] {
+  display: none;
+}
+
+.empty p {
+  margin: 0;
+}
+
+.empty-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.empty-body {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink-muted);
+}

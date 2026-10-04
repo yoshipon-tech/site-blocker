@@ -1,4 +1,5 @@
-import { blocklistItem } from "@/utils/storage";
+import { completePendingSite } from "@/utils/editor";
+import { blocklistItem, pendingSiteItem } from "@/utils/storage";
 import { createSync } from "@/utils/sync";
 
 export default defineBackground(() => {
@@ -22,4 +23,16 @@ export default defineBackground(() => {
   browser.runtime.onStartup.addListener(syncAndReport);
   // 編集画面などで保存内容が変わったとき
   blocklistItem.watch(syncAndReport);
+  // ポップアップから求めた権限が許可されたとき。ポップアップは権限ダイアログで閉じることがあるので、追加はここで仕上げる
+  browser.permissions.onAdded.addListener(({ origins }) => {
+    completePendingSite(origins, {
+      blocklist: blocklistItem,
+      pendingSite: pendingSiteItem,
+    }).catch((error: unknown) => {
+      console.error(
+        "許可されたサイトをブロックリストに追加できませんでした",
+        error,
+      );
+    });
+  });
 });

@@ -47,6 +47,11 @@ export async function launch(
   const requests: string[] = [];
   await context.route("**/*", async (route) => {
     const url = route.request().url();
+    // 拡張自身のページ（ポップアップ）とそのスクリプトは差し替えない
+    if (url.startsWith("chrome-extension://")) {
+      await route.continue();
+      return;
+    }
     requests.push(url);
     const html = url.startsWith(BLOCKED_PAGE)
       ? "<title>blocked</title>"
@@ -95,6 +100,17 @@ export async function removeAllRules(worker: Worker) {
       removeRuleIds: rules.map((rule) => rule.id),
     });
   });
+}
+
+/**
+ * 編集画面のポップアップを、タブとして開く。Playwright はツールバーのポップアップを開けないため。
+ * 拡張の ID は service worker の URL（chrome-extension://<ID>/background.js）から取る
+ */
+export async function openPopup(context: BrowserContext, worker: Worker) {
+  const extensionId = new URL(worker.url()).host;
+  const page = await context.newPage();
+  await page.goto(`chrome-extension://${extensionId}/popup.html`);
+  return page;
 }
 
 export const test = base.extend<{
