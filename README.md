@@ -13,12 +13,12 @@
 ```bash
 mise install && pnpm install
 pnpm --filter @site-blocker/extension run build
-mkdir -p ~/Applications/site-blocker
-rsync -a --delete apps/extension/.output/chrome-mv3/ ~/Applications/site-blocker/
+mkdir -p ~/Desktop/site-blocker
+rsync -a --delete apps/extension/.output/chrome-mv3/ ~/Desktop/site-blocker/
 ```
 
 1. Chrome で `chrome://extensions` を開き、右上の**デベロッパー モード**をオンにする
-2. **パッケージ化されていない拡張機能を読み込む**で `~/Applications/site-blocker` を選ぶ
+2. **パッケージ化されていない拡張機能を読み込む**で `~/Desktop/site-blocker` を選ぶ
 3. ツールバーのパズルアイコンから site-blocker をピン留めする。アイコンを押すと、ブロックするサイトを追加・削除できる
 
 ### 更新
@@ -27,7 +27,7 @@ rsync -a --delete apps/extension/.output/chrome-mv3/ ~/Applications/site-blocker
 git switch main && git pull
 pnpm install
 pnpm --filter @site-blocker/extension run build
-rsync -a --delete apps/extension/.output/chrome-mv3/ ~/Applications/site-blocker/
+rsync -a --delete apps/extension/.output/chrome-mv3/ ~/Desktop/site-blocker/
 ```
 
 `chrome://extensions` で site-blocker の再読み込みボタン（↻）を押す。
