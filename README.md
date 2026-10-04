@@ -2,7 +2,42 @@
 
 指定したサイトを開くと、ブロック画面へリダイレクトする Chrome 拡張。
 
-> 設計段階です。まだ実装はありません。
+> Chrome ウェブストアには未公開です。使うときは下の「個人で使う」の手順で、ビルドした拡張を読み込みます。
+
+## 個人で使う
+
+ビルドした拡張を、Chrome のデベロッパーモードで読み込みます。ブロック画面は GitHub Pages に公開済みのものを使うので、拡張だけで動きます。
+
+### 初回
+
+```bash
+mise install && pnpm install
+pnpm --filter @site-blocker/extension run build
+mkdir -p ~/Applications/site-blocker
+rsync -a --delete apps/extension/.output/chrome-mv3/ ~/Applications/site-blocker/
+```
+
+1. Chrome で `chrome://extensions` を開き、右上の**デベロッパー モード**をオンにする
+2. **パッケージ化されていない拡張機能を読み込む**で `~/Applications/site-blocker` を選ぶ
+3. ツールバーのパズルアイコンから site-blocker をピン留めする。アイコンを押すと、ブロックするサイトを追加・削除できる
+
+### 更新
+
+```bash
+git switch main && git pull
+pnpm install
+pnpm --filter @site-blocker/extension run build
+rsync -a --delete apps/extension/.output/chrome-mv3/ ~/Applications/site-blocker/
+```
+
+`chrome://extensions` で site-blocker の再読み込みボタン（↻）を押す。
+
+### 注意
+
+- **リポジトリの `apps/extension/.output/chrome-mv3/` を直接読み込まない。** `pnpm build` や `test:e2e` のたびに上書きされ、開発中の状態が普段使いの拡張に入る
+- **読み込んだフォルダの場所を変えない。** 場所が変わると別の拡張として扱われ、ブロックリストと許可したサイトの権限が引き継がれない
+- **更新は削除ではなく再読み込みで行う。** 拡張を削除すると、ブロックリストも消える
+- `pnpm --filter @site-blocker/extension run dev` の `chrome-mv3-dev` は、開発サーバーが動いている間しか使えないので普段使いには向かない
 
 ## 仕組み
 
@@ -81,8 +116,8 @@ site-blocker/
 
 ## ロードマップ
 
-- **第一段階**: コードに書いたブロックリストで止め、GitHub Pages のブロック画面に元URLを表示する
-- **次段階以降**: ブロックリスト編集UI、時間帯・曜日によるブロック、一時解除（「5分だけ開く」）、Chrome ウェブストアでの公開
+- **できていること**: ブロックリストのサイトを開くとブロック画面へリダイレクトし、元URLを表示する。ブロックリストはポップアップで追加・削除でき、今開いているページもそのまま追加できる。ログイン済みのサイトに残る service worker も取り除き、ブロックをすり抜けないようにした
+- **これから**: 時間帯・曜日によるブロック、パスワードがないと設定を変えられないロック、Chrome ウェブストアでの公開（プライバシーポリシーのページを含む）
 
 spec の単位・順序・前提条件と、未解決の課題は [docs/guide-roadmap.md](docs/guide-roadmap.md) にまとめています。拡張を Chrome で確認する手順も同じ文書にあります。
 
