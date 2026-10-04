@@ -80,8 +80,7 @@ sequenceDiagram
 
 | 要件 | 検証手段 | 内容 |
 | ---- | -------- | ---- |
-| 1.1 / 1.3 | Playwright | ブロックリストを空にして x.com に service worker を登録し、`["x.com"]` に戻して同じプロファイルで起動し直すと、x.com がブロック画面に移り記録のリクエストが出ない（Playwright では起動し直すと `onInstalled` が発火する） |
-| 1.1 / 1.3 | コマンド | 単体テスト（`tests/background.test.ts`）: `onStartup`・`onInstalled` で取り除く処理が呼ばれる |
+| 1.1 / 1.3 | コマンド | 単体テスト（`tests/background.test.ts`）: `onStartup`・`onInstalled` で、保存内容のドメインから作ったオリジンを取り除く処理が呼ばれる。取り除く処理そのものは 1.2 の Playwright と同じ関数。E2E では「ブロックリストに入ったまま service worker が残っている」状態を作れない（登録用のページを開くと 1.6 で移され、ブロックリストに足すと 1.2 で取り除かれる。実装時に判明） |
 | 1.2 / 1.5 | Playwright | 空のブロックリストで x.com に service worker を登録し、`["x.com"]` を保存すると、x.com がブロック画面に移り記録のリクエストが出ない |
 | 1.4 | コマンド | 単体テスト: `serviceWorkerOrigins(["youtube.com"])` が4つの https オリジンになる |
 | 1.4 / 1.5 | Playwright | `www.x.com` に登録した service worker も 1.2 と同じく取り除かれる |
