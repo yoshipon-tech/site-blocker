@@ -14,14 +14,27 @@ const extensionPath = path.join(import.meta.dirname, "../.output/chrome-mv3");
 
 /** service worker の中で使う chrome の一部 */
 declare const chrome: {
-  declarativeNetRequest: { getDynamicRules(): Promise<{ id: number }[]> };
+  declarativeNetRequest: {
+    getDynamicRules(): Promise<{ id: number }[]>;
+    updateDynamicRules(options: { removeRuleIds: number[] }): Promise<void>;
+  };
+  storage: {
+    local: {
+      get(key: string): Promise<Record<string, unknown>>;
+      set(items: Record<string, unknown>): Promise<void>;
+    };
+  };
 };
 
 /**
  * ビルド済みの拡張を読み込んだ Chromium を起動する。拡張は永続コンテキストでしか動かない。
  * 外部への通信はすべて手元の応答に差し替え、送られた URL を requests に残す
  */
-export async function launch(userDataDir: string) {
+export async function launch(
+  userDataDir: string,
+  // 保存されたブロックリストが空のときはルールが0件のまま。登録を待たずに返す
+  { waitForRules = true } = {},
+) {
   const context = await chromium.launchPersistentContext(userDataDir, {
     // ヘッドレスで拡張を動かすには chromium チャンネルが要る
     channel: "chromium",
@@ -45,8 +58,10 @@ export async function launch(userDataDir: string) {
   const worker =
     context.serviceWorkers()[0] ??
     (await context.waitForEvent("serviceworker"));
-  // インストール時の登録（onInstalled）が終わるまで待つ
-  await expect.poll(() => ruleCount(worker)).toBeGreaterThan(0);
+  if (waitForRules) {
+    // インストール時・起動時の登録が終わるまで待つ
+    await expect.poll(() => ruleCount(worker)).toBeGreaterThan(0);
+  }
 
   return { context, worker, requests };
 }
@@ -55,6 +70,31 @@ export function ruleCount(worker: Worker): Promise<number> {
   return worker.evaluate(
     async () => (await chrome.declarativeNetRequest.getDynamicRules()).length,
   );
+}
+
+/** 保存されたブロックリスト（storage.local の blocklist キー）を読む */
+export function getBlocklist(worker: Worker): Promise<unknown> {
+  return worker.evaluate(
+    async () => (await chrome.storage.local.get("blocklist")).blocklist,
+  );
+}
+
+/** 保存されたブロックリストを書き換える。編集画面（blocklist-ui）が保存したときと同じ経路で拡張に届く */
+export async function setBlocklist(worker: Worker, value: unknown) {
+  await worker.evaluate(
+    (blocklist) => chrome.storage.local.set({ blocklist }),
+    value,
+  );
+}
+
+/** 保存内容はそのままで、dynamic ルールだけを全部外す（保存内容とルールがずれた状態を作る） */
+export async function removeAllRules(worker: Worker) {
+  await worker.evaluate(async () => {
+    const rules = await chrome.declarativeNetRequest.getDynamicRules();
+    await chrome.declarativeNetRequest.updateDynamicRules({
+      removeRuleIds: rules.map((rule) => rule.id),
+    });
+  });
 }
 
 export const test = base.extend<{
