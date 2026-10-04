@@ -1,11 +1,30 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fakeBrowser } from "wxt/testing/fake-browser";
+import { BLOCKED_PAGE_URL } from "@/utils/blocklist";
 
 const sync = vi.fn(() => Promise.resolve());
 vi.mock("@/utils/sync", () => ({ createSync: () => sync }));
 
 const completePendingSite = vi.fn(() => Promise.resolve());
 vi.mock("@/utils/editor", () => ({ completePendingSite }));
+
+const clearServiceWorkers = vi.fn(() => Promise.resolve());
+vi.mock("@/utils/service-worker", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/utils/service-worker")>()),
+  clearServiceWorkers,
+}));
+
+/** 初期値（x.com・twitter.com）から先に取り除くオリジン */
+const DEFAULT_ORIGINS = [
+  "https://x.com",
+  "https://www.x.com",
+  "https://m.x.com",
+  "https://mobile.x.com",
+  "https://twitter.com",
+  "https://www.twitter.com",
+  "https://m.twitter.com",
+  "https://mobile.twitter.com",
+];
 
 type PermissionsListener = (permissions: { origins?: string[] }) => void;
 let permissionsAdded: PermissionsListener[] = [];
@@ -23,6 +42,7 @@ describe("background", () => {
     fakeBrowser.reset();
     sync.mockClear();
     completePendingSite.mockClear();
+    clearServiceWorkers.mockClear();
     // fakeBrowser は permissions のイベントを持たないので、登録されたリスナーを覚えておく
     permissionsAdded = [];
     vi.spyOn(fakeBrowser.permissions.onAdded, "addListener").mockImplementation(
@@ -70,5 +90,73 @@ describe("background", () => {
       ["*://*.youtube.com/*"],
       expect.anything(),
     );
+  });
+
+  it("ブラウザの起動時に、ブロックするサイトの service worker を取り除く", async () => {
+    await startBackground();
+
+    await fakeBrowser.runtime.onStartup.trigger();
+
+    await vi.waitFor(() => {
+      expect(clearServiceWorkers).toHaveBeenCalledWith(
+        expect.anything(),
+        DEFAULT_ORIGINS,
+      );
+    });
+  });
+
+  it("インストール・更新・再読み込みのときに、service worker を取り除く", async () => {
+    await startBackground();
+
+    await fakeBrowser.runtime.onInstalled.trigger({ reason: "update" });
+
+    await vi.waitFor(() => {
+      expect(clearServiceWorkers).toHaveBeenCalledWith(
+        expect.anything(),
+        DEFAULT_ORIGINS,
+      );
+    });
+  });
+
+  it("保存されたブロックリストが変わったとき、新しいリストのサイトの service worker を取り除く", async () => {
+    await startBackground();
+
+    await fakeBrowser.storage.local.set({
+      blocklist: ["youtube.com", "X.com"],
+    });
+
+    await vi.waitFor(() => {
+      expect(clearServiceWorkers).toHaveBeenLastCalledWith(expect.anything(), [
+        "https://youtube.com",
+        "https://www.youtube.com",
+        "https://m.youtube.com",
+        "https://mobile.youtube.com",
+      ]);
+    });
+  });
+
+  it("ブロック中のサイトの URL がタブに入ったら、ブロック画面へ移してそのオリジンの service worker を取り除く", async () => {
+    await startBackground();
+
+    await fakeBrowser.tabs.update(0, { url: "https://news.x.com/home?a=1" });
+
+    await vi.waitFor(async () => {
+      expect((await fakeBrowser.tabs.get(0)).url).toBe(
+        `${BLOCKED_PAGE_URL}#https://news.x.com/home?a=1`,
+      );
+    });
+    expect(clearServiceWorkers).toHaveBeenCalledWith(expect.anything(), [
+      "https://news.x.com",
+    ]);
+  });
+
+  it("ブロック中でないサイトの URL では、タブを移さない", async () => {
+    await startBackground();
+
+    await fakeBrowser.tabs.update(0, { url: "https://example.com/" });
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
+    expect((await fakeBrowser.tabs.get(0)).url).toBe("https://example.com/");
+    expect(clearServiceWorkers).not.toHaveBeenCalled();
   });
 });
