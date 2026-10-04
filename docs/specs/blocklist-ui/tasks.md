@@ -1,6 +1,6 @@
 # 実装タスク: blocklist-ui
 
-- [ ] 1. 編集のロジック
+- [x] 1. 編集のロジック
 
 - [x] 1.1 入力の正規化と追加の可否を判定する関数を作る
   - `utils/blocklist.ts` のドメインの検査を `isDomain(value)` として公開し、`parseBlocklist` もそれを使う（既存のテストが変更なしで通る）
@@ -29,7 +29,7 @@
   - _範囲: `apps/extension/entrypoints/background.ts`, `apps/extension/tests/background.test.ts`, `apps/extension/wxt.config.ts`_
   - _並行: 不可（1.2 を使う）_
 
-- [ ] 2. ポップアップ
+- [x] 2. ポップアップ
 
 - [x] 2.1 一覧を表示するポップアップを作る
   - `entrypoints/popup/` に `index.html`・`main.ts`・`style.css` を置く。行は `describeEntries` から描き、値は `textContent` で出す。`blocklistItem.watch` と `permissions.onAdded/onRemoved` で描き直す
@@ -54,9 +54,9 @@
   - _範囲: `apps/extension/utils/site.ts`（壊す変更は検証後に戻す）_
   - _並行: 不可（2.2 の E2E を使う）_
 
-- [ ] 3. 実ブラウザ
+- [x] 3. 実ブラウザ
 
-- [ ] 3.1 権限ダイアログを通した追加・削除を確かめる（人が操作する）
+- [x] 3.1 権限ダイアログを通した追加・削除を確かめる（人が操作する）
   - `pnpm --filter @site-blocker/extension run build` の `.output/chrome-mv3` を手元の Chrome に開発者モードで読み込み、ツールバーのアイコンからポップアップを開く
   - _検証: ブラウザ: `https://www.youtube.com/watch?v=1` を追加し、許可すると一覧に `youtube.com` が足され、youtube.com と m.youtube.com を開くとブロック画面に元URLが出る / もう一度別のサイトで拒否すると一覧が変わらず理由が出る / youtube.com を削除すると開け、`chrome://extensions` の詳細でそのサイトのアクセス権が消えている / ポップアップの見た目が崩れていない_
   - _要件: 2.1, 2.2, 2.3, 3.4_
