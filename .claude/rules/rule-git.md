@@ -32,6 +32,7 @@ Conventional Commits に従う。type と scope は英語、要約と本文は�
   | `<機能名>`   | その機能の実装（例: `redirect-rules`）   |
   | `root`       | リポジトリ直下の設定                     |
   | `rules`      | `.claude/rules/`                         |
+  | `issues`     | `issues/`                                |
   | `ci`         | `.github/`                               |
 
 - 要約は「〜する」の形で1行。末尾に句点を付けない

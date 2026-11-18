@@ -28,8 +28,8 @@
 
 ### Issues
 **Location**: `/issues/<kebab-case>.md`
-**Purpose**: これから作る機能と未決事項。1 issue = 1 ファイルで、`status`（`backlog` / `ready` / `done`）を持つ。書くのはメインだけ。運用は `issues/README.md`
-**Example**: `issues/schedule-blocking.md`。`status: ready` の issue がサブ（worktree）に渡す作業指示書になる
+**Purpose**: これから作る機能と未決事項。流れは `issue` / `work` スキル、このリポジトリ固有の手段は `issues/README.md`
+**Example**: `issues/schedule-blocking.md`
 
 ### Workspace Root
 **Location**: `/`
