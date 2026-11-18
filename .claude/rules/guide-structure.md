@@ -26,6 +26,11 @@
 **Purpose**: 複数のアプリで共有するもの。デプロイ・配布の単位ではない
 **Example**: `packages/design-system`（デザインシステム Dawn。方針・トークン・部品のガイド・見本画像）。拡張のポップアップと Web のブロック画面の見た目はこれに従う。`package.json` はまだなく、アプリは import していない（値を写して使っている）。import するようになったら workspace に足す
 
+### Issues
+**Location**: `/issues/<kebab-case>.md`
+**Purpose**: これから作る機能と未決事項。1 issue = 1 ファイルで、`status`（`backlog` / `ready` / `done`）を持つ。書くのはメインだけ。運用は `issues/README.md`
+**Example**: `issues/schedule-blocking.md`。`status: ready` の issue がサブ（worktree）に渡す作業指示書になる
+
 ### Workspace Root
 **Location**: `/`
 **Purpose**: `package.json`・`pnpm-workspace.yaml`・全パッケージ共通の設定のみ。アプリ固有のコードは置かない
