@@ -67,11 +67,7 @@ git worktree add ../site-blocker-wt/<機能名> -b feat/<機能名>
 
 ### issue で並行させるとき
 
-メイン（設計室）が `issues/` に作業指示書を書き、サブ（現場）が worktree で実装する。詳細は `issues/README.md`。
-
-- issue ファイルを書くのはメインだけ。サブは読むだけで、結果は報告で返す
-- サブはコミットの前に、新しいコンテキストでレビューし、指摘を直す（このときはサブがコミットする）
-- push と PR の作成は人間がやる。サブは報告の最後に、そのためのコマンドを push と PR 作成で別の行に分けて書く
+メインは `/issue <issue名>` で issue を書き、サブは worktree で `/work <issue名>` で実装する。流れは `issue` スキル、このリポジトリ固有の手段は `issues/README.md`。`work` はサブがコミットする（上の「タスクごとにコミットしない」とは別の流れ）。
 
 ## スキル
 
@@ -80,6 +76,8 @@ git worktree add ../site-blocker-wt/<機能名> -b feat/<機能名>
 - `review` — 実装を spec・スコープ・検証証拠に照らして敵対的にレビューする（`impl` が呼ぶ）
 - `debug` — 行き詰まったときに根本原因から調べる（`impl` が呼ぶ）
 - `verify-completion` — 完了・成功の主張の前に新しい証拠で確認する（`impl` が呼ぶ）
+- `issue` — 並行開発のメインとして issue を書く（backlog / ready / done）
+- `work` — 並行開発のサブとして ready の issue を実装し、レビューしてコミットする
 
 **1%でも当てはまる可能性があればスキルを呼ぶ。簡単そうに見えても飛ばさない。**
 

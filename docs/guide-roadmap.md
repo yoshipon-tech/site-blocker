@@ -2,7 +2,7 @@
 
 **これから何を、どの順で、どのレーンで作るか**を決めた文書。着手前にここを見て、順序と並行できる組を確認する。
 
-- 開発の手順そのものは [guide-workflow.md](guide-workflow.md)、issue で並行させる手順は [issues/README.md](../issues/README.md)
+- 開発の手順そのものは [guide-workflow.md](guide-workflow.md)、issue で並行させる流れは [guide-parallel.md](guide-parallel.md)
 - **確定した spec の影響範囲は `.claude/rules/guide-structure.md` が正**。この文書は計画なので、実装が始まったら guide-structure.md を更新する
 
 ## この文書と issue の分担
@@ -12,11 +12,9 @@
 | | 置くもの |
 | ---- | ---- |
 | **この文書** | 順序・依存関係・並行できる組（状態を持たない判断の前提） |
-| **`issues/`** | 個々の機能と未決事項。`status`（`backlog` / `ready` / `done`）で状態を持つ |
+| **`issues/`** | 個々の機能と未決事項。状態を持つ（[issue スキル](../.claude/skills/issue/SKILL.md)） |
 
-思いついた機能は `issues/` に `status: backlog` で積む。順序と依存を変えるときだけこの文書を直す。
-
-GitHub の issue は使わない。`#12` のような番号は、移す前の GitHub issue と PR を指す（[issues/README.md](../issues/README.md)）。
+思いついた機能は `issues/` に積む。順序と依存を変えるときだけこの文書を直す。GitHub の issue は使わない。
 
 ## 現在地
 
@@ -37,6 +35,7 @@ GitHub の issue は使わない。`#12` のような番号は、移す前の Gi
 | [settings-lock](../issues/settings-lock.md) | spec | `apps/extension` | なし |
 | [privacy-page](../issues/privacy-page.md) | spec | `apps/web` | custom-domain |
 | [store-release](../issues/store-release.md) | spec | `apps/extension`, docs | custom-domain, privacy-page |
+| [harness-cleanup](../issues/harness-cleanup.md) | 決めること | `.claude/skills/`, `.claude/rules/`, docs（main） | 並行開発を1回通しで回し終えること |
 
 「決めること」は spec を作らず、main で相談して `.claude/rules/guide-tech.md` に書いて閉じる。URL の契約は配布した拡張に埋め込まれるので、レーンを分ける前に確定させる。
 
@@ -54,7 +53,7 @@ GitHub の issue は使わない。`#12` のような番号は、移す前の Gi
 - **レーンA と B は並行できる。** 触るディレクトリが `apps/extension` と `apps/web` で分かれている。これを最初の並行の題材にする
 - **レーンA の中は直列。** schedule-blocking と settings-lock はどちらも `apps/extension`（ポップアップと storage）を触る。決めることが残っていない schedule-blocking を先にする
 - **unblock-time で「ブロック画面に解除時刻を渡す」と決めたら、`apps/web` 側の改修も要る。** そのときは privacy-page と同じ `apps/web` になるので、レーンB に直列で積む
-- どのレーンも依存を足さない見込み。足すことになったら、ほかのレーンと同時に走らせない（`pnpm-lock.yaml` が衝突する。[issues/README.md](../issues/README.md) の「範囲が重なるかの判断」）
+- どのレーンも依存を足さない見込み。足すことになったら、ほかのレーンと同時に走らせない（`pnpm-lock.yaml` が衝突する。[issues/README.md](../issues/README.md) の「衝突しやすいファイル」）
 
 ## spec を切る基準
 

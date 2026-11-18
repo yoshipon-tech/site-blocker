@@ -185,6 +185,8 @@ Playwright は MCP ではなくプロジェクトの開発依存として入れ�
 | `review` | 実装を spec・スコープ・検証証拠に照らして敵対的にレビューする | `impl` |
 | `debug` | 行き詰まったときに根本原因から調べる | `impl` |
 | `verify-completion` | 完了・成功の主張の前に新しい証拠で確認する | `impl` |
+| `issue` | 並行開発のメインとして issue を書く | 人（main） |
+| `work` | 並行開発のサブとして issue を実装し、レビューしてコミットする | 人（worktree） |
 
 ## 6. 並行開発
 
@@ -213,16 +215,7 @@ Playwright は MCP ではなくプロジェクトの開発依存として入れ�
 
 ### issue で並行させるとき
 
-上の手順は spec を `/impl` で実装する流れ。`issues/` の作業指示書で並行させるときは [issues/README.md](../issues/README.md) に従う。違いは次のとおり。
-
-| | spec と `/impl` | issue |
-| ---- | ---- | ---- |
-| 指示の置き場所 | `docs/specs/<機能名>/` | `issues/<機能名>.md`（`status: ready`） |
-| worktree の作り方 | `git worktree add` | Orca で workspace を作る |
-| コミット | 人が通しでレビューしてから | サブが新しいコンテキストでレビューし、指摘を直してから |
-| push・PR | 人 | 人（サブはコマンドを報告する） |
-
-spec を作る issue（`labels: [spec]`）は、main で `/spec` を tasks まで作ってから `ready` にし、issue から spec を参照する。今どのレーンを並行できるかは [guide-roadmap.md](guide-roadmap.md) を見る。
+上の手順は spec を `/impl` で実装する流れ。`issues/` の作業指示書で並行させるときは、メインは `/issue`、サブは `/work` を使う。人がやることと流れの図は [guide-parallel.md](guide-parallel.md)、このリポジトリでの手段は [issues/README.md](../issues/README.md) にある。今どのレーンを並行できるかは [guide-roadmap.md](guide-roadmap.md) を見る。
 
 ## 7. よくある迷い
 
