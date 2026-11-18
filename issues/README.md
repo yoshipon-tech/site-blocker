@@ -1,10 +1,32 @@
 # issues
 
-並行開発の作業指示書を置く。**1 issue = 1 ファイル**で、1つの workspace（worktree）で完結する単位にする。
+思いつき・未決事項と、並行開発の作業指示書を置く。**1 issue = 1 ファイル**。どちらの段階にあるかは frontmatter の `status` で表す。
 
 - 書くのはメイン（設計室）だけ。サブ（現場）は読むだけで、結果は報告で返す
-- ファイル名は `<連番3桁>-<kebab-case の要約>.md`（例: `001-privacy-page.md`）
+- ファイル名は `<kebab-case の要約>.md`。番号は振らない。spec を作る issue は spec 名にそろえる（例: `schedule-blocking.md`）
+- issue 同士はファイルへのリンクで参照する（例: `[schedule-blocking](schedule-blocking.md)`）
+- `#12` のような番号は GitHub の issue・PR を指す。閉じた issue は [GitHub](https://github.com/yoshipon-tech/site-blocker/issues?q=is%3Aissue) に履歴として残している。ここに移した issue は、GitHub 側を閉じたときのコメントで移した先のファイルを案内している
 - spec（`docs/specs/`）がある機能は、issue から spec を参照する。issue に設計を書き写さない
+
+## frontmatter
+
+```yaml
+---
+status: backlog
+labels: [spec]
+---
+```
+
+| `status` | 意味 | サブに渡すか |
+| ---- | ---- | ---- |
+| `backlog` | 思いつき・未決。書き方は自由 | 渡さない |
+| `ready` | 方針が固まり、下の「issue テンプレート」の形に書き直した作業指示書。1つの workspace（worktree）で完結する | 渡せる |
+| `done` | マージ済み。ファイルは消さずに残す | — |
+
+- `backlog` → `ready` は、メインが相談して方針を固め、テンプレートの形に書き直すときに変える
+- `ready` → `done` は、人間がマージしたあとにメインが変える
+- `labels` は `spec`（spec を作る単位）と `question`（決めることがある）。どちらでもなければ `[]`
+- 議論の経緯は本文の末尾の「経緯」に日付つきで足す
 
 ## 運用フロー
 
@@ -13,7 +35,7 @@ flowchart TD
   subgraph main["メイン（設計室）"]
     A["相談して方針を固める"] --> B{"図面は決まった？"}
     B -- "まだ" --> A
-    B -- "決まった" --> C["issues/ に 1 issue = 1 ファイルで書く"]
+    B -- "決まった" --> C["issue をテンプレートの形に書き<br>status: ready にする"]
     C --> D["人間が issue を確認する"]
     D --> E{"走っているレーンと<br>範囲が重なる？"}
     E -- "重なる" --> F["順番を待つ"]
@@ -28,7 +50,7 @@ flowchart TD
     J -- "迷った" --> K["AskUserQuestion で聞く"]
     K --> I
     J -- "迷わない" --> V["新しいコンテキストでレビューし<br>指摘を直す"]
-    V --> L["コミットし、要約・次にやること・<br>push と PR 作成の1行を報告する"]
+    V --> L["コミットし、要約・次にやること・<br>push と PR 作成のコマンドを報告する"]
   end
 
   subgraph check["検品（人間）"]
@@ -37,10 +59,13 @@ flowchart TD
     M -- "NG" --> N["差し戻す"]
     N --> I
     M -- "OK" --> T["人間がマージし、worktree を消す"]
+    T --> U["メインが status: done にする"]
   end
 ```
 
-CI と Claude の PR レビューはまだ入れていない。入れたら P と M の間に入る。
+CI はまだ入れていない。Claude の PR レビューは、PR に `@claude` と書けば動く（`.github/workflows/claude.yml`）が、このフローには組み込んでいない。どちらも組み込むなら P と M の間に入る。
+
+順序と、いま並行できる組は [docs/guide-roadmap.md](../docs/guide-roadmap.md) を見る。
 
 ## 範囲が重なるかの判断
 
@@ -56,7 +81,14 @@ CI と Claude の PR レビューはまだ入れていない。入れたら P �
 
 ## issue テンプレート
 
+`status: ready` にするときの形。
+
 ```markdown
+---
+status: ready
+labels: []
+---
+
 # <要約>
 
 ## 目的
@@ -92,7 +124,8 @@ CI と Claude の PR レビューはまだ入れていない。入れたら P �
 
 - 要約（何を変えたか、迷って聞いたこと、確認して分かったこと）
 - 次にやること
-- push と PR 作成の1行（人間が `!` で実行する）
-  `git push -u origin <ブランチ> && gh pr create --base main --title "<タイトル>" --body-file <本文ファイルの絶対パス>`
+- push と PR 作成のコマンド。人間がターミナルで1つずつ実行するので、`&&` でつながず別の行に書く
+  `git push -u origin <ブランチ>`
+  `gh pr create --base main --title "<タイトル>" --body-file <本文ファイルの絶対パス>`
   本文は `.github/pull_request_template.md` の項目で書き、ファイルに置く
 ```

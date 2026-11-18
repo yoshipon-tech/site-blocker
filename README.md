@@ -106,6 +106,7 @@ site-blocker/
 ├── .claude/rules/          前提（guide-*）と作業ルール（rule-*）
 ├── .claude/skills/         review / debug / verify-completion
 ├── docs/specs/             機能ごとの spec
+├── issues/                 これから作る機能・未決事項（1 issue = 1 ファイル）
 ├── .github/workflows/      apps/web を GitHub Pages へ公開
 ├── pnpm-workspace.yaml
 ├── package.json
@@ -119,7 +120,7 @@ site-blocker/
 - **できていること**: ブロックリストのサイトを開くとブロック画面へリダイレクトし、元URLを表示する。ブロックリストはポップアップで追加・削除でき、今開いているページもそのまま追加できる。ログイン済みのサイトに残る service worker も取り除き、ブロックをすり抜けないようにした
 - **これから**: 時間帯・曜日によるブロック、パスワードがないと設定を変えられないロック、Chrome ウェブストアでの公開（プライバシーポリシーのページを含む）
 
-spec の単位・順序・前提条件と、未解決の課題は [docs/guide-roadmap.md](docs/guide-roadmap.md) にまとめています。拡張を Chrome で確認する手順も同じ文書にあります。
+個々の機能と未決事項は [issues/](issues/) に1ファイルずつ置いています。順序と並行できる組は [docs/guide-roadmap.md](docs/guide-roadmap.md) にまとめています。拡張を Chrome で確認する手順も同じ文書にあります。
 
 ## 開発の進め方
 
@@ -135,15 +136,23 @@ Claude Code で進めます。詳しい手順は [docs/guide-workflow.md](docs/g
 - 実装はタスクごとに実際に検証します（コマンド / Playwright / ブラウザ）
 - 機能は触るディレクトリ（影響範囲）で分けます。確定した割り当ては [.claude/rules/guide-structure.md](.claude/rules/guide-structure.md)、これからの計画は [docs/guide-roadmap.md](docs/guide-roadmap.md) にあります
 
-### git worktree による並行開発
+### issue と worktree による並行開発
 
-方針を main で承認したあと、機能ごとにブランチと worktree を作って並行で実装します。
+main の Claude（設計室）が `issues/` に作業指示書を書き、機能ごとの worktree の Claude（現場）が実装します。詳しい流れは [issues/README.md](issues/README.md) を参照してください。
+
+1. main で相談して方針を固め、issue を `status: ready` にしてコミットする
+2. Orca で機能ごとに workspace（worktree）を作る。ブランチは `feat/<機能名>`
+3. 現場の Claude が issue を読んで実装し、新しいコンテキストでレビューしてからコミットする
+4. 人が push して PR を作り、完了条件を確かめてマージする
+
+Orca を使わない場合は、worktree を手で作ります。
 
 ```bash
-git worktree add ../site-blocker-wt/redirect-rules -b feat/redirect-rules
-cd ../site-blocker-wt/redirect-rules && pnpm install
+git worktree add ../site-blocker-wt/<機能名> -b feat/<機能名>
+cd ../site-blocker-wt/<機能名> && pnpm install
 ```
 
+- 範囲（触るディレクトリ）が重なる issue は同時に走らせない
 - `.claude/rules/`・spec・URL の契約は分岐前に main で確定させる
 - 実装中に方針を変えたくなったら main で直してから各ブランチに取り込む
 - `pnpm-lock.yaml` が衝突したら手で直さず、マージ後に `pnpm install` で作り直す
