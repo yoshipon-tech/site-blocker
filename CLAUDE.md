@@ -65,6 +65,14 @@ git worktree add ../site-blocker-wt/<機能名> -b feat/<機能名>
 
 `tasks.md` の `_並行: 不可_` は同一機能内のタスクの順序制約であり、worktree の単位ではない。
 
+### issue で並行させるとき
+
+メイン（設計室）が `issues/` に作業指示書を書き、サブ（現場）が worktree で実装する。詳細は `issues/README.md`。
+
+- issue ファイルを書くのはメインだけ。サブは読むだけで、結果は報告で返す
+- サブはコミットの前に、新しいコンテキストでレビューし、指摘を直す（このときはサブがコミットする）
+- push と PR の作成は人間がやる。サブは報告の最後に、そのための1行のコマンドを書く
+
 ## スキル
 
 - `spec` — requirements → design → tasks を作る
