@@ -15,9 +15,20 @@ argument-hint: <issue名>
 
 リポジトリ固有の手段（確認・レビュー・コミット・PR）は `issues/README.md` にある。開始前に必ず読む。
 
+## issue の場所
+
+**issue は main の作業ツリーから読む。**メインはコミットせずに issue を書き換えるので、worktree の中の `issues/` は古い。読まない。
+
+```bash
+MAIN_DIR=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")
+# 読むもの: $MAIN_DIR/issues/<issue名>.md と $MAIN_DIR/issues/README.md
+```
+
+作業の途中でも、issue を読み直すときは毎回ここから読む。
+
 ## 開始前に必ずやること
 
-1. `issues/<issue名>.md` と `issues/README.md` を読む
+1. main の作業ツリーにある `issues/<issue名>.md` と `issues/README.md` を読む（「issue の場所」）
 2. `status: ready` であることを確認する。違えば始めずに人に返す
 3. `git branch --show-current` が `main` でないことを確認する。`main` なら始めずに、worktree を作るよう人に返す
 4. `git status` を確認する。未コミットの変更があれば、どれが自分の範囲外かを把握してから始める

@@ -19,7 +19,7 @@ argument-hint: <issue名> [backlog|ready|done]
 
 | 役割 | 動く場所 | やること | やらないこと |
 | ---- | ---- | ---- | ---- |
-| メイン | main | 相談して方針を固める。issue を書き、`status` を変え、main にコミットする | 実装 |
+| メイン | main | 相談して方針を固める。issue を書き、`status` を変える。コミットは `done` のときにまとめる | 実装 |
 | サブ | worktree | `ready` の issue を1つ実装し、レビューしてコミットし、報告する | issue ファイルの編集、push、PR の作成 |
 | 人間 | ターミナル | issue の確認、workspace の作成、push・PR・マージ、worktree の削除 | — |
 
@@ -74,7 +74,7 @@ argument-hint: <issue名> [backlog|ready|done]
    - 依存の追加（ロックファイルの更新）が要る issue は、ほかと同時に走らせない
    - 共有する前提（ルール、契約、spec）が要るなら、先に main で確定させる
 5. `status: ready` にして人に見せ、確認を待つ
-6. 人が了承したら main にコミットする（`issues/README.md` のコミットの決まりに従う）。push はしない
+6. 人が了承したら、サブに渡せる状態になったと伝える。**コミットは要らない。**サブは main の作業ツリーの issue を直接読むので、書き換えはそのまま見える。だから、サブに渡したあとに書きかけの状態で保存しない
 
 報告の最後に、人が workspace を作るときに要るもの（ブランチ名、サブに渡す最初の一言 `/work <issue名>`）を書く。
 
@@ -82,7 +82,7 @@ argument-hint: <issue名> [backlog|ready|done]
 
 1. 人がマージしたことを確認する（`git log` に該当の変更が main に入っていること）
 2. `status: done` にし、「経緯」にマージした日付を足す
-3. main にコミットする
+3. まだコミットしていない issue の書き換えをまとめて main にコミットする（`issues/README.md` のコミットの決まりに従う）。push はしない
 
 ## 禁止事項
 

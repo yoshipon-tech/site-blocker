@@ -19,7 +19,7 @@ flowchart TD
     C --> D["人間が issue を確認する"]
     D --> E{"走っているレーンと<br>範囲が重なる？"}
     E -- "重なる" --> F["順番を待つ"]
-    E -- "重ならない" --> C2["issue を main にコミットする"]
+    E -- "重ならない" --> C2["サブに渡せる状態にする<br>（コミットは done のときに）"]
     C2 --> G["人間が Orca で workspace を作る"]
   end
 
@@ -60,8 +60,7 @@ CI や PR の自動レビューを組み込むときは P と M の間に入れ�
 
 1. メインの質問に答えて方針を決める
 2. 書き直された issue を読む。特に「範囲」「完了条件」「迷ったら」
-3. よければ「コミットして」と伝える
-4. ターミナルで main を push する（`git push origin main`）
+3. よければ「3. workspace を作る」に進む。**コミットも push も要らない**（サブは main の作業ツリーの issue を直接読む）
 
 ### 3. workspace を作る（Orca）
 
@@ -75,7 +74,7 @@ CI や PR の自動レビューを組み込むときは P と M の間に入れ�
 ```
 
 - サブからの質問（AskUserQuestion）に答える。範囲の外を触りたいと言われたら、その場で許すか、メインで issue を直すかを決める
-- issue を直したときは、main でコミットしてから workspace のターミナルで `git merge main` を打ち、サブに「issue を読み直して」と伝える
+- issue を直したいときは、メインのセッションで直してもらい、サブに「issue を読み直して」と伝える。コミットも `git merge main` も要らない
 
 ### 5. push して PR を作る（ターミナル）
 
@@ -98,7 +97,7 @@ push のときに husky が `pnpm check` を走らせる。落ちたらサブに
 1. GitHub でマージする
 2. Orca で workspace（worktree）を消す
 3. main のターミナルで `git pull`
-4. main のセッションで `/issue <issue名> done` → 「コミットして」→ `git push origin main`
+4. main のセッションで `/issue <issue名> done`。それまでの issue の書き換えがまとめてコミットされる。push は次に main を push するときでよい
 
 ## 困ったとき
 
@@ -106,7 +105,7 @@ push のときに husky が `pnpm check` を走らせる。落ちたらサブに
 | ---- | ---- |
 | `pnpm-lock.yaml` が衝突した | 手で直さない。後からマージする側で `pnpm install` して作り直す |
 | サブが同じ確認で3回失敗して止まった | 推測で続けさせない。報告をメインに持っていき、issue を直すか分割する |
-| 実装中に前提（ルール・契約・spec）を変えたくなった | main で直してコミットし、workspace で `git merge main` |
+| 実装中に前提（ルール・契約・spec）を変えたくなった | main で直してコミットし、workspace で `git merge main`。issue と違い、サブは worktree の中のものを読むので取り込みが要る |
 | サブが issue ファイルを書き換えた | 差分から戻させる。直したい内容はメインに伝える |
 
 ## 直したいときにどこを直すか
